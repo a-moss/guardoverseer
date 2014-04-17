@@ -1,1 +1,8 @@
 # Welcome to the messages.yml config for GuardOverseer
+# This is where you can configure EVERY message in the GuardOverseer plugin!
+# Color codes ARE supported!
+# Well, lets get started!
+
+# This is the prefix that is in front of all messages
+prefix: 
+
