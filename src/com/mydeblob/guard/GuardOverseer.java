@@ -206,10 +206,6 @@ public class GuardOverseer extends JavaPlugin{
 			this.saveDefaultConfig();
 			getLogger().info("GuardOverseer --------- No config.yml found! Loading default config!");
 		}
-		if(!this.messageFile.exists()){
-			this.saveDefaultMessageConfig();
-			getLogger().info("GuardOverseer --------- No messages.yml found! Loading default messages.yml!");
-		}
 		if (!setupEconomy() ) {
 			Bukkit.getServer().getLogger().log(Level.SEVERE, String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
 			getServer().getPluginManager().disablePlugin(this);
