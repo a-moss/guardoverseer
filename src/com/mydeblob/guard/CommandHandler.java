@@ -30,9 +30,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 
 public class CommandHandler implements CommandExecutor, Listener{
 	private final GuardOverseer plugin; 
+	public int max_value = Integer.MAX_VALUE;
 	public CommandHandler(GuardOverseer plugin) {
 		this.plugin = plugin; 
 	}
@@ -105,6 +107,29 @@ public class CommandHandler implements CommandExecutor, Listener{
 	
 	public String parseColors(String message){
 		return ChatColor.translateAlternateColorCodes('&', message);
+	}
+	public void givePotions(Player p){
+		if(plugin.getConfig().getConfigurationSection("kits") != null){
+			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
+					if(getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
+									ArrayList<String> potionlist = new ArrayList<String>();
+									for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
+										potionlist.add(s);
+									}
+									for(String s:potionlist){
+										String[] pe = s.split(" ");
+										if(plugin.POTIONS.containsKey(pe[0])){
+											p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, parseIntSingle(pe[1])));
+										}
+									}
+								}
+							}
+						}
+	}
+	public void removePotions(Player p){
+		for(PotionEffect pe:p.getActivePotionEffects()){
+			p.removePotionEffect(pe.getType());
+		}
 	}
 	public void givePermissions(Player p){
 			for(String s:plugin.getConfig().getStringList("onduty-permissions")){

@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GuardOverseer extends JavaPlugin{
@@ -33,7 +34,61 @@ public class GuardOverseer extends JavaPlugin{
 	public static Economy econ = null;
 	public static Permission perms = null;
 	public final Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
+	public final Map <String, PotionEffectType> POTIONS = new HashMap<String, PotionEffectType>();
 	public void onEnable(){
+		POTIONS.put("speed", PotionEffectType.SPEED);
+		POTIONS.put("fastwalking", PotionEffectType.SPEED);
+		POTIONS.put("walkfast", PotionEffectType.SPEED);
+		POTIONS.put("slow", PotionEffectType.SLOW);
+		POTIONS.put("slowness", PotionEffectType.SLOW);
+		POTIONS.put("slowwalking", PotionEffectType.SLOW);
+		POTIONS.put("walkfast", PotionEffectType.SLOW);
+		POTIONS.put("haste", PotionEffectType.FAST_DIGGING);
+		POTIONS.put("fastdigging", PotionEffectType.FAST_DIGGING);
+		POTIONS.put("fastmining", PotionEffectType.FAST_DIGGING);
+		POTIONS.put("digfast", PotionEffectType.FAST_DIGGING);
+		POTIONS.put("minefast", PotionEffectType.FAST_DIGGING);
+		POTIONS.put("miningfatigue", PotionEffectType.SLOW_DIGGING);
+		POTIONS.put("slowdigging", PotionEffectType.SLOW_DIGGING);
+		POTIONS.put("slowmining", PotionEffectType.SLOW_DIGGING);
+		POTIONS.put("digslow", PotionEffectType.SLOW_DIGGING);
+		POTIONS.put("mineslow", PotionEffectType.SLOW_DIGGING);
+		POTIONS.put("jump", PotionEffectType.JUMP);
+		POTIONS.put("jumpboost", PotionEffectType.JUMP);
+		POTIONS.put("boostjump", PotionEffectType.JUMP);
+		POTIONS.put("jumphigh", PotionEffectType.JUMP);
+		POTIONS.put("highjump", PotionEffectType.JUMP);
+		POTIONS.put("confusion", PotionEffectType.CONFUSION);
+		POTIONS.put("nausea", PotionEffectType.CONFUSION);
+		POTIONS.put("sickness", PotionEffectType.CONFUSION);
+		POTIONS.put("dizzy", PotionEffectType.CONFUSION);
+		POTIONS.put("regeneration", PotionEffectType.REGENERATION);
+		POTIONS.put("regen", PotionEffectType.REGENERATION);
+		POTIONS.put("regenerate", PotionEffectType.REGENERATION);
+		POTIONS.put("regeneratehealth", PotionEffectType.REGENERATION);
+		POTIONS.put("resistance", PotionEffectType.DAMAGE_RESISTANCE);
+		POTIONS.put("damageresistance", PotionEffectType.DAMAGE_RESISTANCE);
+		POTIONS.put("fireresistance", PotionEffectType.FIRE_RESISTANCE);
+		POTIONS.put("fireimmunity", PotionEffectType.FIRE_RESISTANCE);
+		POTIONS.put("fireimmune", PotionEffectType.FIRE_RESISTANCE);
+		POTIONS.put("nofire", PotionEffectType.FIRE_RESISTANCE);
+		POTIONS.put("waterbreathing", PotionEffectType.WATER_BREATHING);
+		POTIONS.put("breathwater", PotionEffectType.WATER_BREATHING);
+		POTIONS.put("gills", PotionEffectType.WATER_BREATHING);
+		POTIONS.put("invisibility", PotionEffectType.INVISIBILITY);
+		POTIONS.put("invisible", PotionEffectType.INVISIBILITY);
+		POTIONS.put("notseen", PotionEffectType.INVISIBILITY);
+		POTIONS.put("ghost", PotionEffectType.INVISIBILITY);
+		POTIONS.put("nightvision", PotionEffectType.NIGHT_VISION);
+		POTIONS.put("seeindark", PotionEffectType.NIGHT_VISION);
+		POTIONS.put("nightgoggles", PotionEffectType.NIGHT_VISION);
+		POTIONS.put("weakness", PotionEffectType.WEAKNESS);
+		POTIONS.put("notstrong", PotionEffectType.WEAKNESS);
+		POTIONS.put("weak", PotionEffectType.WEAKNESS);
+		POTIONS.put("strength", PotionEffectType.INCREASE_DAMAGE);
+		POTIONS.put("increasedamage", PotionEffectType.INCREASE_DAMAGE);
+		POTIONS.put("increaseddamage", PotionEffectType.INCREASE_DAMAGE);
+		POTIONS.put("strong", PotionEffectType.INCREASE_DAMAGE);
 		//Begining of code taken from Essentials. Let's face it, who wants to type out 100+ lines of nearly identical code?
 		ENCHANTMENTS.put("alldamage", Enchantment.DAMAGE_ALL);
 		ENCHANTMENTS.put("alldmg", Enchantment.DAMAGE_ALL);
@@ -202,6 +257,9 @@ public class GuardOverseer extends JavaPlugin{
 	//Update code token from gomeow's player vault plugin
 	public void checkUpdate()
 	{
+		if(!getConfig().getBoolean("auto-updater")){
+			return;
+		}
 		new BukkitRunnable()
 		{
 			public void run() {

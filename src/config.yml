@@ -7,6 +7,7 @@
 # IMPORTANT** A single player can not have more than one kit permission
 # IMPORTANT** You must use item ids, google them if you don't know them
 # IMPORTANT** You MUST use the format seen below otherwise the plugin WILL break!
+# All potions last until the player goes off duty
 kits:
    default:
       permission: guardoverseer.default
@@ -18,8 +19,10 @@ kits:
         - 276 1 sharpness:20 fireaspect:10
         - 364 32
         - 322:1 2
+      potions:
+        - speed 2
 # ------------------------------------------------------------
-# ----------------Misc(Economy, prefix etc.)------------------
+# ----------------Misc(Economy, items etc.)------------------
 # ------------------------------------------------------------
 
 # This is wether or not to drop guard items when he dies. This will only affect a player
@@ -49,3 +52,6 @@ money-given-on-death : 10000
 # ie: Someones on duty and I hit them it will message them
 # "mydeblob has hit you with a hand!"
 tell-guard-who-hit: true
+
+# This will disable the auto-updater in-game if set to false
+auto-updater: true
