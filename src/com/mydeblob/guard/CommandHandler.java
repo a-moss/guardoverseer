@@ -88,6 +88,16 @@ public class CommandHandler implements CommandExecutor, Listener{
 				return true;
 			}
 		}
+		if(cmd.getName().equalsIgnoreCase("guardoverseer")){
+			if(sender.hasPermission("guardoverseer.reload")){
+				plugin.reloadConfig();
+				sender.sendMessage(parseColors(plugin.getConfig().getString("prefix")) + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
+				return true;
+			}else{
+				sender.sendMessage(parseColors(plugin.getConfig().getString("no-perms")));
+				return true;
+			}
+		}
 		return false;
 	}
 	

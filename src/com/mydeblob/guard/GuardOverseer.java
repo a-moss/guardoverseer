@@ -25,6 +25,8 @@ public class GuardOverseer extends JavaPlugin{
 	public ArrayList<String> duty = new ArrayList<String>();
 	private FileConfiguration playerConfig = null;
 	private File playerFile = null;
+	private FileConfiguration messageConfig = null;
+	private File messageFile = null;
 	public static boolean UPDATE = false;
 	public static String NEWVERSION = "";
 	public static String LINK = "";
@@ -247,6 +249,38 @@ public class GuardOverseer extends JavaPlugin{
 			getPlayerConfig().save(playerFile);
 		} catch (IOException ex) {
 			getLogger().log(Level.SEVERE, "Could not save config to " + playerFile, ex);
+		}
+	}
+
+	
+	public void reloadMessageConfig() {
+		if (messageFile == null) {
+			messageFile = new File(getDataFolder(), "messages.yml");
+		}
+		messageConfig = YamlConfiguration.loadConfiguration(messageFile);
+
+		InputStream defConfigStream = this.getResource("messages.yml");
+		if (defConfigStream != null) {
+			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+			messageConfig.setDefaults(defConfig);
+		}
+	}
+
+	public FileConfiguration getMessageConfig() {
+		if (messageConfig == null) {
+			reloadMessageConfig();
+		}
+		return messageConfig;
+	}
+
+	public void saveMessageConfig() {
+		if (messageConfig == null || messageFile == null) {
+			return;
+		}
+		try {
+			getPlayerConfig().save(messageFile);
+		} catch (IOException ex) {
+			getLogger().log(Level.SEVERE, "Could not save config to " + messageFile, ex);
 		}
 	}
 
