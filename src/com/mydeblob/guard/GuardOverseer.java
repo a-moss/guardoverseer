@@ -152,6 +152,10 @@ public class GuardOverseer extends JavaPlugin{
 			this.saveDefaultConfig();
 			getLogger().info("GuardOverseer --------- No config.yml found! Loading default config!");
 		}
+		if(!this.messageFile.exists()){
+			this.saveDefaultMessageConfig();
+			getLogger().info("GuardOverseer --------- No messages.yml found! Loading default messages.yml!");
+		}
 		if (!setupEconomy() ) {
 			Bukkit.getServer().getLogger().log(Level.SEVERE, String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
 			getServer().getPluginManager().disablePlugin(this);
@@ -177,9 +181,7 @@ public class GuardOverseer extends JavaPlugin{
 	}
 
 	public void onDisable(){
-		getLogger().info("----------------------------------------------------");
 		getLogger().info("The Guard Plugin has been disabled, made by mydeblob");
-		getLogger().info("----------------------------------------------------");
 		getPlayerConfig().set("onDuty", Arrays.asList(duty));
 		savePlayerConfig();
 	}
@@ -199,7 +201,7 @@ public class GuardOverseer extends JavaPlugin{
 		perms = rsp.getProvider();
 		return perms != null;
 	}
-	//Update code token from gomeow's player vault
+	//Update code token from gomeow's player vault plugin
 	public void checkUpdate()
 	{
 		new BukkitRunnable()
@@ -252,7 +254,6 @@ public class GuardOverseer extends JavaPlugin{
 		}
 	}
 
-	
 	public void reloadMessageConfig() {
 		if (messageFile == null) {
 			messageFile = new File(getDataFolder(), "messages.yml");
@@ -282,6 +283,14 @@ public class GuardOverseer extends JavaPlugin{
 		} catch (IOException ex) {
 			getLogger().log(Level.SEVERE, "Could not save config to " + messageFile, ex);
 		}
+	}
+	public void saveDefaultMessageConfig() {
+	    if (messageFile == null) {
+	        messageFile = new File(getDataFolder(), "messages.yml");
+	    }
+	    if (!messageFile.exists()) {            
+	         this.saveResource("messages.yml", false);
+	     }
 	}
 
 }
