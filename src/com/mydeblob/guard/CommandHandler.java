@@ -94,16 +94,34 @@ public class CommandHandler implements CommandExecutor, Listener{
 				return true;
 			}
 		}
-		if(cmd.getName().equalsIgnoreCase("guardoverseer")){
-			if(sender.hasPermission("guardoverseer.reload")){
-				plugin.reloadConfig();
-				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
-				return true;
-			}else{
-				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
-				return true;
-			}
-		}
+//		if(cmd.getName().equalsIgnoreCase("guardoverseer")){
+//			if(sender.hasPermission("guardoverseer.reload")){
+//				if(cmd.getName().equalsIgnoreCase("guardoverseer")){
+//					if(args.length >= 0){
+//						if(args.length == 0 || args.length == 1){
+//							if(args[0].equalsIgnoreCase("reload")){
+//								plugin.reloadConfig();
+//								plugin.reloadMessageConfig();
+//								sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
+//								return true;
+//							}else{
+//								sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "Incorrect usage! Correct usage: /guardoverseer reload");
+//								return true;
+//							}
+//						}else{
+//							sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "Incorrect usage! Correct usage: /guardoverseer reload");
+//							return true;
+//						}
+//					}else{
+//						sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "Incorrect usage! Correct usage: /guardoverseer reload");
+//						return true;
+//					}
+//				}
+//			}else{
+//				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
+//				return true;
+//			}
+//		}
 		return false;
 	}
 	
