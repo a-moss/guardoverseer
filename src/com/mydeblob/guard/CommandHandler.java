@@ -49,22 +49,24 @@ public class CommandHandler implements CommandExecutor, Listener{
 				if(!onDuty(p)){
 					GuardOverseer.perms.playerAdd(p, "combatlog.bypass");
 					givePermissions(p);
+					givePotions(p);
 					plugin.duty.add(p.getName());
 					setPlayerFile(p);
-					p.sendMessage(parseColors(plugin.getMessageConfig().getString(plugin.getConfig().getString("saved"))));
+					p.sendMessage(parseColors(plugin.getMessageConfig().getString("saved")));
 					clearInventory(p);
 					giveKit(p);
-					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
+					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + " " + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("on-duty")));
 					return true;
 				}else{
 					GuardOverseer.perms.playerRemove(p, "combatlog.bypass");
 					removePermissions(p);
+					removePotions(p);
 					plugin.duty.remove(p.getName());
 					clearInventory(p);
 					getPlayerData(p);
 					unsetPlayerFile(p);
-					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("off-duty-broadcast")).replaceAll("%p", p.getName()));
+					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("off-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("off-duty")));
 					return true;
 				}
@@ -85,7 +87,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					String name = s + ", ";
 					onduty.add(name);
 				}
-				p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("list-guards")).replaceAll("%g", onduty.toString()));
+				p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("list-guards")).replaceAll("%g", onduty.toString()));
 				return true;
 			}else{
 				p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
@@ -95,7 +97,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 		if(cmd.getName().equalsIgnoreCase("guardoverseer")){
 			if(sender.hasPermission("guardoverseer.reload")){
 				plugin.reloadConfig();
-				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
+				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
 				return true;
 			}else{
 				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
@@ -228,14 +230,14 @@ public class CommandHandler implements CommandExecutor, Listener{
 				perms.add(plugin.getConfig().getString("kits." + k + ".permission"));
 			}
 		}else{
-			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
+			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("error")));
 		}
 		for(String s:perms){
 			if(p.hasPermission(s)){
 				return s;
 			}
 		}
-		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("error")));
 		return null;
 	}
 	@SuppressWarnings("deprecation")
@@ -384,14 +386,14 @@ public class CommandHandler implements CommandExecutor, Listener{
 					} 
 			}
 		}else{
-			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
+			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("error")));
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerLogin(PlayerJoinEvent e){
 		Player p = (Player) e.getPlayer();
-		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.BLUE + "Running GuardOverseer, by mydeblob");
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.BLUE + "Running GuardOverseer, by mydeblob");
 	}
 	@EventHandler
 	public void onDragEvent(InventoryClickEvent e){
@@ -440,10 +442,10 @@ public class CommandHandler implements CommandExecutor, Listener{
 			if(onDuty(player)){
 			EconomyResponse r = GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("money-given-on-death"));
 			if(r.transactionSuccess()){
-					killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("money-message")).replaceAll("%a", String.valueOf(plugin.getConfig().getInt("money-given-on-death"))));
+					killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message")).replaceAll("%a", String.valueOf(plugin.getConfig().getInt("money-given-on-death"))));
 				}
 			if(!r.transactionSuccess()){
-				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
+				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("error")));
 			}
 			}
 		}

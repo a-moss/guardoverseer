@@ -23,7 +23,7 @@ no-permission: '&4You do not have permission to use this command!'
 money-message: '&aYou just got rewarded $%a for killing a guard!'
 # This is the message a player gets when he goes off duty and it successfully loaded
 # his previous state (game mode, xp, inventory etc.)
-succesfully-loaded: '&Successfully loaded your previous state!'
+succesfully-loaded: '&aSuccessfully loaded your previous state!'
 # This is the message a player gets when he goes off duty and it fails to load his
 # previous state. (This only happens if the playerData.yml gets deleted)
 fail-loaded: '&cFailed to load your previous state! Please report this to an admin!'
