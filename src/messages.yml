@@ -7,10 +7,10 @@
 prefix: '&f[&bGuardOverseer&f]'
 # This is the message that gets broadcasted when a player goes on duty
 # %p gets replaces with the players name that went on duty
-on-duty: '&a%p has just gone on duty! See all the guards that are on duty with &c/guards'
+on-duty-broadcast: '&a%p has just gone on duty! See all the guards that are on duty with &c/guards'
 # This is the message that gets broadcasted when a player goes off duty
 # %p gets replaces with the players name that went off duty
-off-duty: '&a%p has just gone off duty! See all the guards that are on duty with &c/guards'
+off-duty-broadcast: '&a%p has just gone off duty! See all the guards that are on duty with &c/guards'
 # This is the message that is displayed when a player tries to list the guards (/guards)
 # %g is replaced with all the guards that are on duty
 list-guards: '&aThe following guards are on duty:&f %g'
@@ -34,3 +34,10 @@ error: '&4An error has occurred. Contact an admin!'
 # This is the message a player on duty receives when he tries to perform a command
 # he isn't allowed to on duty
 no-command: '&4You are not allowed to perform this command while on duty!'
+# This is the message a player gets when his inventory has successfully saved when
+# going on duty
+saved: '&aYour inventory has successfully been saved!'
+# This is the message the player gets letting them know they have gone on duty
+on-duty: '&6You have gone on duty!'
+# This is the message the player gets letting them know they have gone off duty
+off-duty: '&6You have gone off duty!'

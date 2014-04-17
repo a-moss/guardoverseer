@@ -48,11 +48,11 @@ public class CommandHandler implements CommandExecutor, Listener{
 					GuardOverseer.perms.playerAdd(p, "combatlog.bypass");
 					plugin.duty.add(p.getName());
 					setPlayerFile(p);
-					p.sendMessage(ChatColor.GREEN + "Your inventory has been saved!");
+					p.sendMessage(parseColors(plugin.getMessageConfig().getString(plugin.getConfig().getString("saved"))));
 					clearInventory(p);
 					giveKit(p);
-					Bukkit.getServer().broadcastMessage(parseColors(plugin.getConfig().getString("prefix")) + parseColors(plugin.getConfig().getString("on-duty-message")).replaceAll("%p", p.getName()));
-					sender.sendMessage(ChatColor.GOLD + "You have gone on duty!");
+					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
+					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("on-duty")));
 					return true;
 				}else{
 					GuardOverseer.perms.playerRemove(p, "combatlog.bypass");
@@ -60,12 +60,12 @@ public class CommandHandler implements CommandExecutor, Listener{
 					clearInventory(p);
 					getPlayerData(p);
 					unsetPlayerFile(p);
-					Bukkit.getServer().broadcastMessage(parseColors(plugin.getConfig().getString("prefix")) + parseColors(plugin.getConfig().getString("off-duty-message")).replaceAll("%p", p.getName()));
-					sender.sendMessage(ChatColor.GOLD + "You are now off duty!");
+					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("off-duty-broadcast")).replaceAll("%p", p.getName()));
+					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("off-duty")));
 					return true;
 				}
 			}else{
-				p.sendMessage(parseColors(plugin.getConfig().getString("no-perms")));
+				p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
 				return true;
 			}
 		}
@@ -81,20 +81,20 @@ public class CommandHandler implements CommandExecutor, Listener{
 					String name = s + ", ";
 					onduty.add(name);
 				}
-				p.sendMessage(parseColors(plugin.getConfig().getString("prefix")) + parseColors(plugin.getConfig().getString("guard-list-message")).replaceAll("%g", onduty.toString()));
+				p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("list-guards")).replaceAll("%g", onduty.toString()));
 				return true;
 			}else{
-				p.sendMessage(parseColors(plugin.getConfig().getString("no-perms")));
+				p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
 				return true;
 			}
 		}
 		if(cmd.getName().equalsIgnoreCase("guardoverseer")){
 			if(sender.hasPermission("guardoverseer.reload")){
 				plugin.reloadConfig();
-				sender.sendMessage(parseColors(plugin.getConfig().getString("prefix")) + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
+				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
 				return true;
 			}else{
-				sender.sendMessage(parseColors(plugin.getConfig().getString("no-perms")));
+				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
 				return true;
 			}
 		}
@@ -154,7 +154,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 		Object a = plugin.getPlayerConfig().get("playerData." + p.getName() + ".inventory");
 		Object b = plugin.getPlayerConfig().get("playerData." + p.getName() + ".armor");
 		if(a == null || b == null){
-			p.sendMessage(ChatColor.DARK_RED + "No saved inventory to load");
+			p.sendMessage(parseColors(plugin.getMessageConfig().getString("fail-loaded")));
 			return;
 		}
 		ItemStack[] inventory = null;
@@ -182,7 +182,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 		}
 		p.setExp(plugin.getPlayerConfig().getLong("playerData." + p.getName() + ".xp"));
 		plugin.savePlayerConfig();
-		p.sendMessage(ChatColor.GREEN + "Succesfully loaded your previous state!");
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("succesfully-loaded")));
 	}
 	public String getPermission(Player p){
 		List<String> perms = new ArrayList<String>();
@@ -191,14 +191,14 @@ public class CommandHandler implements CommandExecutor, Listener{
 				perms.add(plugin.getConfig().getString("kits." + k + ".permission"));
 			}
 		}else{
-			p.sendMessage(ChatColor.RED + "[GuardOverseer] An error has occured. Contact an admin!");
+			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
 		}
 		for(String s:perms){
 			if(p.hasPermission(s)){
 				return s;
 			}
 		}
-		p.sendMessage(ChatColor.RED + "[GuardOverseer] An error has occured. Contact an admin!");
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
 		return null;
 	}
 	@SuppressWarnings("deprecation")
@@ -347,30 +347,29 @@ public class CommandHandler implements CommandExecutor, Listener{
 					} 
 			}
 		}else{
-			p.sendMessage(ChatColor.RED + "[GuardOverseer] An error has occured. Contact an admin!");
+			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
 		}
 	}
 	
 	@EventHandler
-	public void onPlayerLogin(PlayerJoinEvent event){
-		Player player = (Player) event.getPlayer();
-		player.sendMessage(plugin.getConfig().getString("prefix").replaceAll("&", "\u00A7") + ChatColor.BLUE + "Running GuardOverseer, by mydeblob");
+	public void onPlayerLogin(PlayerJoinEvent e){
+		Player p = (Player) e.getPlayer();
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.BLUE + "Running GuardOverseer, by mydeblob");
 	}
 	@EventHandler
-	public void onDragEvent(InventoryClickEvent event){
-		Player player = (Player) event.getWhoClicked();
-		if(onDuty(player)){
-			event.setCancelled(true);
+	public void onDragEvent(InventoryClickEvent e){
+		Player p = (Player) e.getWhoClicked();
+		if(onDuty(p)){
+			e.setCancelled(true);
 		}
 	}
 	@EventHandler
-	public void onPlayerDeathEvent(PlayerDeathEvent event){
-		Player player = (Player) event.getEntity();
-		if(event.getEntity() instanceof Player){
+	public void onPlayerDeathEvent(PlayerDeathEvent e){
+		Player p = (Player) e.getEntity();
+		if(e.getEntity() instanceof Player){
 			if(!plugin.getConfig().getBoolean("drop-items-on-death")){
-				if(onDuty(player)){
-					event.getDrops().clear();
-
+				if(onDuty(p)){
+					e.getDrops().clear();
 				}
 			}
 		}
@@ -386,10 +385,10 @@ public class CommandHandler implements CommandExecutor, Listener{
 	}
 	@EventHandler
 	public void itemframe(PlayerInteractEntityEvent event){
-		Player player = event.getPlayer();
+		Player p = event.getPlayer();
 		Entity e = event.getRightClicked();
 		if(e instanceof ItemFrame){
-			if(onDuty(player)){
+			if(onDuty(p)){
 				event.setCancelled(true);
 			}
 		}
@@ -404,10 +403,10 @@ public class CommandHandler implements CommandExecutor, Listener{
 			if(onDuty(player)){
 			EconomyResponse r = GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("money-given-on-death"));
 			if(r.transactionSuccess()){
-					killer.sendMessage(plugin.getConfig().getString("prefix") + ChatColor.GOLD + String.format("You have just killed a guard! For doing so you have been rewarded %s", GuardOverseer.econ.format(r.amount)));
+					killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("money-message")).replaceAll("%a", String.valueOf(plugin.getConfig().getInt("money-given-on-death"))));
 				}
 			if(!r.transactionSuccess()){
-				killer.sendMessage(plugin.getConfig().getString("prefix") + ChatColor.DARK_RED + "Error! Report this to an admin!");
+				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + parseColors(plugin.getMessageConfig().getString("error")));
 			}
 			}
 		}
@@ -448,7 +447,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 			for(String s:plugin.disabled){
 				if(e.getMessage().startsWith(s)){
 					e.setCancelled(true);
-					p.sendMessage(ChatColor.DARK_RED + "You are not allowed to perform this command while on duty!");
+					p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-command")));
 				}
 			}
 		}
