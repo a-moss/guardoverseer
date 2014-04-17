@@ -1,0 +1,11 @@
+name: GaurdOverseer
+main: com.mydeblob.guard.GuardOverseer
+version: 3.0
+depends: Vault
+commands:
+   duty:
+      description: Toggles going on and off duty.
+      usage: /<command> 
+   guards:
+      description: Lists all guards currently on duty.
+      usage: /<command> 
