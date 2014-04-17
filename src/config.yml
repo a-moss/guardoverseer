@@ -29,11 +29,14 @@ drop-items-on-death : false
 # When the player is on duty if this is set to true they will NOT lose hunger
 disable-hunger: true
 
-
 # These are commands that the player won't be able to perform when he is on duty
 disabled-commands:
    - /auc
    - /sell
+
+# These are permission a guard will have only when he is ON duty
+onduty-permissions:
+   - essentials.togglejail
 # Economy support! Yay! Requires Vault!
 # Wether or not to support economy
 economy-support : true
@@ -46,19 +49,3 @@ money-given-on-death : 10000
 # ie: Someones on duty and I hit them it will message them
 # "mydeblob has hit you with a hand!"
 tell-guard-who-hit: true
-
-# This is the prefix used for all GuardOverseer messages, default it GuardOverseer
-prefix : '&f[&bGuardOverseer&f]&r '
-
-# This is the message displayed when a guard goes on/off duty
-# %p is replaced with the players name
-on-duty-message: '&a%p has gone on duty! See all the guards on duty with &c/guards'
-off-duty-message: '&a%p has gone off duty! See all the guards on duty with &c/guards'
-
-# This is the message when a player performs a command from this plugin and they don't
-# have permission for it
-no-perms: '&4You do not have permission to use this command!'
-
-# This is the message when a player types /guards
-# %g is replaced for all online guards
-guard-list-message: '&aThe following guards are on duty:&f %g'

@@ -46,6 +46,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 			if(p.hasPermission("guardoverseer.duty")){
 				if(!onDuty(p)){
 					GuardOverseer.perms.playerAdd(p, "combatlog.bypass");
+					givePermissions(p);
 					plugin.duty.add(p.getName());
 					setPlayerFile(p);
 					p.sendMessage(parseColors(plugin.getMessageConfig().getString(plugin.getConfig().getString("saved"))));
@@ -56,6 +57,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					return true;
 				}else{
 					GuardOverseer.perms.playerRemove(p, "combatlog.bypass");
+					removePermissions(p);
 					plugin.duty.remove(p.getName());
 					clearInventory(p);
 					getPlayerData(p);
@@ -103,6 +105,16 @@ public class CommandHandler implements CommandExecutor, Listener{
 	
 	public String parseColors(String message){
 		return ChatColor.translateAlternateColorCodes('&', message);
+	}
+	public void givePermissions(Player p){
+			for(String s:plugin.getConfig().getStringList("onduty-permissions")){
+				GuardOverseer.perms.playerAdd(p, s);
+			}
+	}
+	public void removePermissions(Player p){
+		for(String s:plugin.getConfig().getStringList("onduty-permissions")){
+			GuardOverseer.perms.playerRemove(p, s);
+		}
 	}
 	public void clearInventory(Player p){
 		PlayerInventory pi = p.getInventory();
@@ -444,7 +456,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public void onCmd(PlayerCommandPreprocessEvent e){
 		Player p = (Player) e.getPlayer();
 		if(onDuty(p)){
-			for(String s:plugin.disabled){
+			for(String s:plugin.getConfig().getStringList("disabled-commands")){
 				if(e.getMessage().startsWith(s)){
 					e.setCancelled(true);
 					p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-command")));

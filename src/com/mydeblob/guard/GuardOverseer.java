@@ -33,7 +33,6 @@ public class GuardOverseer extends JavaPlugin{
 	public static Economy econ = null;
 	public static Permission perms = null;
 	public final Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
-	ArrayList<String> disabled = new ArrayList<String>();
 	public void onEnable(){
 		//Begining of code taken from Essentials. Let's face it, who wants to type out 100+ lines of nearly identical code?
 		ENCHANTMENTS.put("alldamage", Enchantment.DAMAGE_ALL);
@@ -161,7 +160,6 @@ public class GuardOverseer extends JavaPlugin{
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		disabled.addAll(getConfig().getStringList("disabled-commands"));
 		//Printing to the console
 		getLogger().info("The Guard Overseer Plugin has been enabled, made by mydeblob");
 		getServer().getPluginManager().registerEvents(new CommandHandler(this), this);
