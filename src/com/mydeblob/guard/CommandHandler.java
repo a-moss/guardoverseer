@@ -99,7 +99,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 			if(sender.hasPermission("guardoverseer.update")){
 				if(plugin.getConfig().getBoolean("auto-updater")){
 					@SuppressWarnings("unused")
-					Updater updater = new Updater(plugin, 66080, plugin.getFile(), Updater.UpdateType.NO_VERSION_CHECK, true); // Go straight to downloading, and announce progress to console.
+					Updater updater = new Updater(plugin, 66080, plugin.getF(), Updater.UpdateType.NO_VERSION_CHECK, true); // Go straight to downloading, and announce progress to console.
 					return true;
 				}else{
 					sender.sendMessage(ChatColor.RED + "Please enable auto updating in the GuardOverseer config.yml to use this feature");

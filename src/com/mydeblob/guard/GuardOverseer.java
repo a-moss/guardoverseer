@@ -337,7 +337,7 @@ public class GuardOverseer extends JavaPlugin{
 	         this.saveResource("messages.yml", false);
 	     }
 	}
-	public File getFile(){
+	public File getF(){
 		return this.getFile();
 	}
 }
