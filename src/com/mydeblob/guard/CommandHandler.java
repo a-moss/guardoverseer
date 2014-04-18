@@ -83,6 +83,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 			Player p = (Player) sender;
 			if(p.hasPermission("guardoverseer.guards")){
 				ArrayList<String> onduty = new ArrayList<String>();
+				onduty.clear();
 				for(String s:plugin.duty){
 					String name = s + ", ";
 					onduty.add(name);
@@ -91,6 +92,21 @@ public class CommandHandler implements CommandExecutor, Listener{
 				return true;
 			}else{
 				p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
+				return true;
+			}
+		}
+		if(cmd.getName().equalsIgnoreCase("update")){
+			if(sender.hasPermission("guardoverseer.update")){
+				if(plugin.getConfig().getBoolean("auto-updater")){
+					@SuppressWarnings("unused")
+					Updater updater = new Updater(plugin, 66080, plugin.getFile(), Updater.UpdateType.NO_VERSION_CHECK, true); // Go straight to downloading, and announce progress to console.
+					return true;
+				}else{
+					sender.sendMessage(ChatColor.RED + "Please enable auto updating in the GuardOverseer config.yml to use this feature");
+					return true;
+				}
+			}else{
+				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
 				return true;
 			}
 		}
@@ -408,10 +424,17 @@ public class CommandHandler implements CommandExecutor, Listener{
 		}
 	}
 	
+	@SuppressWarnings("static-access")
 	@EventHandler
 	public void onPlayerLogin(PlayerJoinEvent e){
 		Player p = (Player) e.getPlayer();
 		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.BLUE + "Running GuardOverseer, by mydeblob");
+		  if(p.hasPermission("guardoverseer.update") && plugin.update && plugin.getConfig().getBoolean("auto-updater"))
+		  {
+		    p.sendMessage(ChatColor.BLUE + "An update is available: " + plugin.name + ", a " + plugin.type + " for " + plugin.version + " available at " + plugin.link);
+		    // Will look like - An update is available: AntiCheat v1.5.9, a release for CB 1.6.2-R0.1 available at http://media.curseforge.com/XYZ
+		    p.sendMessage(ChatColor.BLUE + "Type /update if you would like to automatically update.");
+		  }
 	}
 	@EventHandler
 	public void onDragEvent(InventoryClickEvent e){
@@ -509,15 +532,6 @@ public class CommandHandler implements CommandExecutor, Listener{
 			}
 		}
 	}
-	 @SuppressWarnings("static-access")
-	@EventHandler
-	  public void onJoin(PlayerJoinEvent event) {
-	    Player player = event.getPlayer();
-	    if ((player.isOp()) && (plugin.UPDATE)) {
-	      player.sendMessage(new StringBuilder().append(ChatColor.GREEN).append("Version ").append(plugin.NEWVERSION).append(" of GuardOverseer is up for download!").toString());
-	      player.sendMessage(new StringBuilder().append(ChatColor.GREEN).append(plugin.LINK).append(" to view the changelog and download!").toString());
-	    }
-	  }
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event){
 		Player p = (Player) event.getPlayer();

@@ -19,7 +19,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+
+import com.mydeblob.guard.Updater.ReleaseType;
 
 public class GuardOverseer extends JavaPlugin{
 	FileConfiguration config;
@@ -28,13 +29,15 @@ public class GuardOverseer extends JavaPlugin{
 	private File playerFile = null;
 	private FileConfiguration messageConfig = null;
 	private File messageFile = null;
-	public static boolean UPDATE = false;
-	public static String NEWVERSION = "";
-	public static String LINK = "";
 	public static Economy econ = null;
 	public static Permission perms = null;
 	public final Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
 	public final Map <String, PotionEffectType> POTIONS = new HashMap<String, PotionEffectType>();
+	public static boolean update = false;
+	public static String name = "";
+	public static ReleaseType type = null;
+	public static String version = "";
+	public static String link = "";
 	public void onEnable(){
 		POTIONS.put("speed", PotionEffectType.SPEED);
 		POTIONS.put("fastwalking", PotionEffectType.SPEED);
@@ -232,6 +235,14 @@ public class GuardOverseer extends JavaPlugin{
 			}
 		}
 		savePlayerConfig();
+		if(getConfig().getBoolean("auto-updater")){
+			Updater updater = new Updater(this, 66080, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start Updater but just do a version check
+			update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
+			name = updater.getLatestName(); // Get the latest name
+			version = updater.getLatestGameVersion(); // Get the latest game version
+			type = updater.getLatestType(); // Get the latest file's type
+			link = updater.getLatestFileLink(); // Get the latest link
+		}
 	}
 
 	public void onDisable(){
@@ -254,30 +265,6 @@ public class GuardOverseer extends JavaPlugin{
 		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
 		perms = rsp.getProvider();
 		return perms != null;
-	}
-	//Update code token from gomeow's player vault plugin
-	public void checkUpdate()
-	{
-		if(!getConfig().getBoolean("auto-updater")){
-			return;
-		}
-		new BukkitRunnable()
-		{
-			public void run() {
-				try {
-					Updater u = new Updater(GuardOverseer.this.getDescription().getVersion());
-					if ((GuardOverseer.UPDATE = u.getUpdate())) {
-						GuardOverseer.LINK = u.getLink();
-						GuardOverseer.NEWVERSION = u.getNewVersion();
-					}
-				} catch (Exception e) {
-					getLogger().log(Level.WARNING, "Failed to check for updates.");
-							getLogger().log(Level.WARNING, "Report this stack trace to mydeblob.");
-							e.printStackTrace();
-				}
-			}
-		}
-		.runTaskAsynchronously(this);
 	}
 
 	public void reloadPlayerConfig() {
@@ -349,5 +336,7 @@ public class GuardOverseer extends JavaPlugin{
 	         this.saveResource("messages.yml", false);
 	     }
 	}
-
+	public File getFile(){
+		return this.getFile();
+	}
 }
