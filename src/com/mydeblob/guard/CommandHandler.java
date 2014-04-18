@@ -147,7 +147,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public void givePotions(Player p){
 		if(plugin.getConfig().getConfigurationSection("kits") != null){
 			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
-					if(getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
+					if(getPermission(p) != null & getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
 									ArrayList<String> potionlist = new ArrayList<String>();
 									for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
 										potionlist.add(s);
@@ -371,7 +371,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public void giveKit(Player p){
 		if(plugin.getConfig().getConfigurationSection("kits") != null){
 			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
-					if(getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
+					if(getPermission(p) != null & getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
 						ArrayList<String> items = new ArrayList<String>();
 						for(String ca: plugin.getConfig().getStringList("kits." + k + ".kit-items")){
 							items.add(ca);
