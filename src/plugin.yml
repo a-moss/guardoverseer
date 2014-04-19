@@ -1,4 +1,4 @@
-name: GaurdOverseer
+name: GuardOverseer
 main: com.mydeblob.guard.GuardOverseer
 version: 3.0
 depends: Vault
