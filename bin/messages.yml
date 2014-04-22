@@ -1,0 +1,43 @@
+# Welcome to the messages.yml config for GuardOverseer
+# This is where you can configure EVERY message in the GuardOverseer plugin!
+# Color codes ARE supported! Just use the & sign in front of the color
+# Well, lets get started!
+
+# This is the prefix that is in front of all messages
+prefix: '&f[&bGuardOverseer&f]'
+# This is the message that gets broadcasted when a player goes on duty
+# %p gets replaces with the players name that went on duty
+on-duty-broadcast: '&a%p has just gone on duty! See all the guards that are on duty with &c/guards'
+# This is the message that gets broadcasted when a player goes off duty
+# %p gets replaces with the players name that went off duty
+off-duty-broadcast: '&a%p has just gone off duty! See all the guards that are on duty with &c/guards'
+# This is the message that is displayed when a player tries to list the guards (/guards)
+# %g is replaced with all the guards that are on duty
+list-guards: '&aThe following guards are on duty:&f %g'
+# This is the message a player gets when he ttys a command in the plugin that he doesn't
+# have permission for
+no-permission: '&4You do not have permission to use this command!'
+# This is the message a player will receive if economy support is enabled and if
+# he kills a guard and gets money for it
+# %a gets replaced with how much money you are paying them (defined in config.yml)
+money-message: '&aYou just got rewarded $%a for killing a guard!'
+# This is the message a player gets when he goes off duty and it successfully loaded
+# his previous state (game mode, xp, inventory etc.)
+succesfully-loaded: '&aSuccessfully loaded your previous state!'
+# This is the message a player gets when he goes off duty and it fails to load his
+# previous state. (This only happens if the playerData.yml gets deleted)
+fail-loaded: '&cFailed to load your previous state! Please report this to an admin!'
+# This is the message that gets sent to the player if an error has occurred
+# This usually happens when something is configured correctly in the config.yml
+# WARNING -- If you change this to much you may not know if it is an error or not!
+error: '&4An error has occurred. Contact an admin!'
+# This is the message a player on duty receives when he tries to perform a command
+# he isn't allowed to on duty
+no-command: '&4You are not allowed to perform this command while on duty!'
+# This is the message a player gets when his inventory has successfully saved when
+# going on duty
+saved: '&aYour inventory has successfully been saved!'
+# This is the message the player gets letting them know they have gone on duty
+on-duty: '&6You have gone on duty!'
+# This is the message the player gets letting them know they have gone off duty
+off-duty: '&6You have gone off duty!'

@@ -1,0 +1,57 @@
+# GuardOverseer by mydeblob. Welcome to the config :)
+
+# ----------------------Class!--------------------------------
+
+# You MUST follow the template below; Give the player the permission guardoverseer.duty
+# and the permission of the kit you want him to use
+# IMPORTANT** A single player can not have more than one kit permission
+# IMPORTANT** You must use item ids, google them if you don't know them
+# IMPORTANT** You MUST use the format seen below otherwise the plugin WILL break!
+# All potions last until the player goes off duty
+kits:
+   default:
+      permission: guardoverseer.default
+      kit-items:
+        - 302 1 protection:50 unbreaking:50
+        - 303 1 protection:50 unbreaking:50
+        - 304 1 protection:50 unbreaking:50
+        - 305 1 protection:50 unbreaking:50
+        - 276 1 sharpness:20 fireaspect:10
+        - 364 32
+        - 322:1 2
+      potions:
+        - speed 2
+# ------------------------------------------------------------
+# ----------------Misc(Economy, items etc.)------------------
+# ------------------------------------------------------------
+
+# This is wether or not to drop guard items when he dies. This will only affect a player
+# When they are on /duty
+drop-items-on-death : false
+
+# When the player is on duty if this is set to true they will NOT lose hunger
+disable-hunger: true
+
+# These are commands that the player won't be able to perform when he is on duty
+disabled-commands:
+   - /auc
+   - /sell
+
+# These are permission a guard will have only when he is ON duty
+onduty-permissions:
+   - essentials.togglejail
+# Economy support! Yay! Requires Vault!
+# Wether or not to support economy
+economy-support : true
+
+# If economy-support is true, how much money a player is given when he kills a guard
+# Default is $10,000
+money-given-on-death : 10000
+
+# This will tell players who are on duty who hit them and with what. 
+# ie: Someones on duty and I hit them it will message them
+# "mydeblob has hit you with a hand!"
+tell-guard-who-hit: true
+
+# This will disable the auto-updater in-game if set to false
+auto-updater: true
