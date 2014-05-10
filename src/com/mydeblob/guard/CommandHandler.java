@@ -10,9 +10,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -30,6 +32,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 public class CommandHandler implements CommandExecutor, Listener{
@@ -95,7 +98,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 				return true;
 			}
 		}
-		if(cmd.getName().equalsIgnoreCase("update")){
+		if(cmd.getName().equalsIgnoreCase("gupdate")){
 			if(sender.hasPermission("guardoverseer.update")){
 				if(plugin.getConfig().getBoolean("auto-updater")){
 					@SuppressWarnings("unused")
@@ -110,34 +113,31 @@ public class CommandHandler implements CommandExecutor, Listener{
 				return true;
 			}
 		}
-//		if(cmd.getName().equalsIgnoreCase("guardoverseer")){
-//			if(sender.hasPermission("guardoverseer.reload")){
-//				if(cmd.getName().equalsIgnoreCase("guardoverseer")){
-//					if(args.length >= 0){
-//						if(args.length == 0 || args.length == 1){
-//							if(args[0].equalsIgnoreCase("reload")){
-//								plugin.reloadConfig();
-//								plugin.reloadMessageConfig();
-//								sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.GREEN + "Succesfully reloaded the configuration file!");
-//								return true;
-//							}else{
-//								sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "Incorrect usage! Correct usage: /guardoverseer reload");
-//								return true;
-//							}
-//						}else{
-//							sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "Incorrect usage! Correct usage: /guardoverseer reload");
-//							return true;
-//						}
-//					}else{
-//						sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "Incorrect usage! Correct usage: /guardoverseer reload");
-//						return true;
-//					}
-//				}
-//			}else{
-//				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
-//				return true;
-//			}
-//		}
+		if(cmd.getName().equalsIgnoreCase("greload")){
+			if(sender.hasPermission("guardoverseer.reload")){
+				if(sender instanceof ConsoleCommandSender){
+					Server server = Bukkit.getServer();
+					ConsoleCommandSender c = server.getConsoleSender();
+					plugin.reloadConfig();
+					plugin.reloadMessageConfig();
+					plugin.saveConfig();
+					plugin.saveMessageConfig();
+					c.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.GREEN + "Successfully reloaded the configurations for GuardOverseer!");
+					return true;
+				}else if(sender instanceof Player){
+					Player p = (Player) sender;
+					plugin.reloadConfig();
+					plugin.reloadMessageConfig();
+					plugin.saveConfig();
+					plugin.saveMessageConfig();
+					p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.GREEN + "Successfully reloaded the configurations for GuardOverseer!");
+					return true;
+				}
+			}else{
+				sender.sendMessage(parseColors(plugin.getMessageConfig().getString("no-permission")));
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -380,7 +380,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 						PlayerInventory pi = p.getInventory();
 						for(String s:items){
 							String[] sa = s.split(" "); //Break them up into spaces. This is where the plugin will break if additional spaces are provided
-							int length = sa.length; //If it is over 1 than they added enchantments
+							int length = sa.length; //If it is over 3 than they added enchantments
 							int item = 0;
 							int damage = 0;
 							item = parseInt(sa[0])[0];
@@ -388,8 +388,19 @@ public class CommandHandler implements CommandExecutor, Listener{
 								damage = parseInt(sa[0])[1];
 							}
 							ItemStack tis = new ItemStack(Material.getMaterial(item), parseIntSingle(sa[1]), (short) damage);
-							if(length > 1){
-								for(int i = 2;i<length;i++){
+							ItemMeta im = tis.getItemMeta();
+							if(!sa[2].equalsIgnoreCase("null")){
+								im.setDisplayName(ChatColor.translateAlternateColorCodes('&', sa[2]));
+							}if(!sa[3].equalsIgnoreCase("null")){
+								ArrayList<String> lore = new ArrayList<String>();
+								for(String ss:sa[3].split("%n%")){
+									lore.add(ss);
+								}
+								im.setLore(lore);
+							}
+							tis.setItemMeta(im);
+							if(length > 3){
+								for(int i = 3;i<=length;i++){
 									String[] el = sa[i].split(":");
 									String e = el[0];
 									String l = el[1];

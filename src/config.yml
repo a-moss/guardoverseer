@@ -7,15 +7,19 @@
 # IMPORTANT** A single player can not have more than one kit permission
 # IMPORTANT** You must use item ids, google them if you don't know them
 # IMPORTANT** You MUST use the format seen below otherwise the plugin WILL break!
+# IMPORTANT** When declaring a name or lore you MUST use _ as a space
+# if you dont the plugin will break!
+# %n% will create a new line **THIS ONLY WORKS ON THE LORE**
+# Set the name or lore to null if you dont want it to appear
 # All potions last until the player goes off duty
 kits:
    default:
       permission: guardoverseer.default
       kit-items:
-        - 302 1 protection:50 unbreaking:50
-        - 303 1 protection:50 unbreaking:50
-        - 304 1 protection:50 unbreaking:50
-        - 305 1 protection:50 unbreaking:50
+        - 302 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players! protection:50 unbreaking:50
+        - 303 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players protection:50 unbreaking:50
+        - 304 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players protection:50 unbreaking:50
+        - 305 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players protection:50 unbreaking:50
         - 276 1 sharpness:20 fireaspect:10
         - 364 32
         - 322:1 2
