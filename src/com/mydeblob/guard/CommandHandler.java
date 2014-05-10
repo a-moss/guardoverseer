@@ -3,9 +3,7 @@ package com.mydeblob.guard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
 import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -389,14 +387,16 @@ public class CommandHandler implements CommandExecutor, Listener{
 							}
 							ItemStack tis = new ItemStack(Material.getMaterial(item), parseIntSingle(sa[1]), (short) damage);
 							ItemMeta im = tis.getItemMeta();
-							if(!sa[2].equalsIgnoreCase("null")){
-								im.setDisplayName(ChatColor.translateAlternateColorCodes('&', sa[2]));
-							}if(!sa[3].equalsIgnoreCase("null")){
-								ArrayList<String> lore = new ArrayList<String>();
-								for(String ss:sa[3].split("%n%")){
-									lore.add(ss);
+							if(sa.length > 3){
+								if(!sa[2].equalsIgnoreCase("null")){
+									im.setDisplayName(ChatColor.translateAlternateColorCodes('&', sa[2]));
+								}if(!sa[3].equalsIgnoreCase("null")){
+									ArrayList<String> lore = new ArrayList<String>();
+									for(String ss:sa[3].split("%n%")){
+										lore.add(ss);
+									}
+									im.setLore(lore);
 								}
-								im.setLore(lore);
 							}
 							tis.setItemMeta(im);
 							if(length > 3){

@@ -20,7 +20,7 @@ kits:
         - 303 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players protection:50 unbreaking:50
         - 304 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players protection:50 unbreaking:50
         - 305 1 name:&4Guard_Armor lore:&3You_are_on_duty%n%&2Go_protect_some_players protection:50 unbreaking:50
-        - 276 1 sharpness:20 fireaspect:10
+        - 276 1 name:null lore:null sharpness:20 fireaspect:10
         - 364 32
         - 322:1 2
       potions:
