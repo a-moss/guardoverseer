@@ -153,7 +153,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 									for(String s:potionlist){
 										String[] pe = s.split(" ");
 										if(plugin.POTIONS.containsKey(pe[0])){
-											p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, parseIntSingle(pe[1])));
+											p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, (parseIntSingle(pe[1])-1)));
 										}
 									}
 								}
@@ -388,19 +388,22 @@ public class CommandHandler implements CommandExecutor, Listener{
 							ItemStack tis = new ItemStack(Material.getMaterial(item), parseIntSingle(sa[1]), (short) damage);
 							ItemMeta im = tis.getItemMeta();
 							if(sa.length > 3){
-								if(!sa[2].equalsIgnoreCase("null")){
-									im.setDisplayName(ChatColor.translateAlternateColorCodes('&', sa[2]));
-								}if(!sa[3].equalsIgnoreCase("null")){
-									ArrayList<String> lore = new ArrayList<String>();
-									for(String ss:sa[3].split("%n%")){
-										lore.add(ss);
+									String[] name = sa[2].split(":");
+									if(!name[1].equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "null")))){
+									im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name[1].replaceAll("_", " ")));
 									}
-									im.setLore(lore);
-								}
-							}
+									String[] lores = sa[3].split(":");
+									if(!lores[1].equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "null")))){
+										ArrayList<String> lore = new ArrayList<String>();
+										for(String ss:lores[1].split("%n%")){
+											lore.add(ChatColor.translateAlternateColorCodes('&', ss.replaceAll("_", " ")));
+										}
+										im.setLore(lore);
+									}
 							tis.setItemMeta(im);
+							}
 							if(length > 3){
-								for(int i = 3;i<=length;i++){
+								for(int i = 3;i<length;i++){
 									String[] el = sa[i].split(":");
 									String e = el[0];
 									String l = el[1];
