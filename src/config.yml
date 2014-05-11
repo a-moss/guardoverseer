@@ -41,17 +41,6 @@ disabled-commands:
    - /auc
    - /sell
 
-# These are permission a guard will have only when he is ON duty
-onduty-permissions:
-   - essentials.togglejail
-# Economy support! Yay! Requires Vault!
-# Wether or not to support economy
-economy-support : true
-
-# If economy-support is true, how much money a player is given when he kills a guard
-# Default is $10,000
-money-given-on-death : 10000
-
 # This will tell players who are on duty who hit them and with what. 
 # ie: Someones on duty and I hit them it will message them
 # "mydeblob has hit you with a hand!"
@@ -59,3 +48,23 @@ tell-guard-who-hit: true
 
 # This will disable the auto-updater in-game if set to false
 auto-updater: true
+# ******************THIS REQUIRES VAULT AND WILL NOT WORK WITHOUT IT****************
+# These are permission a guard will have only when he is ON duty
+onduty-permissions:
+   - essentials.togglejail
+
+# Wether or not to give money to a player who kills a guard
+give-money: true
+
+# Amount of money to give to the player IF give-money is true
+amount: 10000
+
+# Wether or not to pay the guards for how long they are on duty
+pay-guards: true
+
+# Amount to pay the guards IF pay-guards is true
+# This is an hourly rate
+# If a player only goes on duty for 30 minutes, he will only be payed for the time
+# he was on duty
+# By default, they get payed 10,000 an hour
+salary: 10000

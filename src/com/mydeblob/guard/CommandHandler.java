@@ -1,9 +1,10 @@
 package com.mydeblob.guard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import net.milkbowl.vault.economy.EconomyResponse;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -39,6 +40,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public CommandHandler(GuardOverseer plugin) {
 		this.plugin = plugin; 
 	}
+	private HashMap<String, Long> timeDuty = new HashMap<String, Long>();
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("duty")){
 			if(!(sender instanceof Player)){
@@ -56,6 +58,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					p.sendMessage(parseColors(plugin.getMessageConfig().getString("saved")));
 					clearInventory(p);
 					giveKit(p);
+					startTime(p);
 					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + " " + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("on-duty")));
 					return true;
@@ -67,6 +70,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					clearInventory(p);
 					getPlayerData(p);
 					unsetPlayerFile(p);
+					endTime(p);
 					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("off-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("off-duty")));
 					return true;
@@ -141,6 +145,26 @@ public class CommandHandler implements CommandExecutor, Listener{
 	
 	public String parseColors(String message){
 		return ChatColor.translateAlternateColorCodes('&', message);
+	}
+	public void startTime(Player p){
+		if(timeDuty.containsKey(p.getName())){
+			timeDuty.remove(p.getName());
+		}
+		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+		timeDuty.put(p.getName(), System.currentTimeMillis());
+		
+	}
+	public void endTime(Player p){
+		if(!timeDuty.containsKey(p.getName())){
+			return;
+		}
+		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+		long start = timeDuty.get(p.getName());
+		int seconds = (int)(start-System.currentTimeMillis()/1000); //in seconds
+		int minutes = (seconds/60);
+		int pay = (plugin.getConfig().getInt("salary")/60);
+		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes);
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes).replaceAll("%t%", String.valueOf(minutes))));
 	}
 	public void givePotions(Player p){
 		if(plugin.getConfig().getConfigurationSection("kits") != null){
@@ -493,15 +517,10 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public void playerDeathEco(PlayerDeathEvent event){
 		Player player = (Player) event.getEntity();
 		Player killer = (Player) event.getEntity().getKiller();
-		if(plugin.getConfig().getBoolean("economy-support")){
+		if(plugin.getConfig().getBoolean("give-money")){
 			if(onDuty(player)){
-			EconomyResponse r = GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("money-given-on-death"));
-			if(r.transactionSuccess()){
-					killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message")).replaceAll("%a", String.valueOf(plugin.getConfig().getInt("money-given-on-death"))));
-				}
-			if(!r.transactionSuccess()){
-				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("error")));
-			}
+				GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("amount"));
+				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message")));
 			}
 		}
 	}
