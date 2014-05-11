@@ -31,7 +31,7 @@ money-message: '&aYou just got rewarded $%a% for killing a guard!'
 # in the config.yml
 # %a% is replaced with how much he is getting payed and %t% is replaced with how long he
 # went on duty for in minutes
-salary: '&aYou just got payed $%a% for going on duty for %t%'
+pay-day: '&aYou just got payed $%a% for going on duty for %t% minute(s)!'
 
 # This is the message a player gets when he goes off duty and it successfully loaded
 # his previous state (game mode, xp, inventory etc.)

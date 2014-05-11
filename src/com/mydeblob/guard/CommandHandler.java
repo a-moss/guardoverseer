@@ -3,6 +3,7 @@ package com.mydeblob.guard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					clearInventory(p);
 					giveKit(p);
 					startTime(p);
-					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + " " + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
+					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("on-duty")));
 					return true;
 				}else{
@@ -70,9 +71,9 @@ public class CommandHandler implements CommandExecutor, Listener{
 					clearInventory(p);
 					getPlayerData(p);
 					unsetPlayerFile(p);
-					endTime(p);
 					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("off-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("off-duty")));
+					endTime(p);
 					return true;
 				}
 			}else{
@@ -124,7 +125,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					plugin.reloadMessageConfig();
 					plugin.saveConfig();
 					plugin.saveMessageConfig();
-					c.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.GREEN + "Successfully reloaded the configurations for GuardOverseer!");
+					c.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + ChatColor.GREEN + "Successfully reloaded the configurations for GuardOverseer!");
 					return true;
 				}else if(sender instanceof Player){
 					Player p = (Player) sender;
@@ -132,7 +133,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 					plugin.reloadMessageConfig();
 					plugin.saveConfig();
 					plugin.saveMessageConfig();
-					p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + ChatColor.GREEN + "Successfully reloaded the configurations for GuardOverseer!");
+					p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + ChatColor.GREEN + "Successfully reloaded the configurations for GuardOverseer!");
 					return true;
 				}
 			}else{
@@ -144,6 +145,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 	}
 	
 	public String parseColors(String message){
+		if(message == null) return null;
 		return ChatColor.translateAlternateColorCodes('&', message);
 	}
 	public void startTime(Player p){
@@ -160,11 +162,14 @@ public class CommandHandler implements CommandExecutor, Listener{
 		}
 		if(!plugin.getConfig().getBoolean("pay-guards")) return;
 		long start = timeDuty.get(p.getName());
-		int seconds = (int)(start-System.currentTimeMillis()/1000); //in seconds
-		int minutes = (seconds/60);
+		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
+		p.sendMessage(String.valueOf(seconds));
+		int minutes = (int) seconds/60;
+		p.sendMessage(String.valueOf(minutes));
 		int pay = (plugin.getConfig().getInt("salary")/60);
+		p.sendMessage(String.valueOf(pay));
 		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes);
-		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes).replaceAll("%t%", String.valueOf(minutes))));
+		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
 	}
 	public void givePotions(Player p){
 		if(plugin.getConfig().getConfigurationSection("kits") != null){
@@ -520,7 +525,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 		if(plugin.getConfig().getBoolean("give-money")){
 			if(onDuty(player)){
 				GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("amount"));
-				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message")));
+				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message").replaceAll("%a%", String.valueOf(plugin.getConfig().getInt("amount")))));
 			}
 		}
 	}

@@ -9,6 +9,9 @@ commands:
    guards:
       description: Lists all guards currently on duty.
       usage: /<command> 
-   update:
+   gupdate:
       description: Updates the plugin.
+      usage: /<command> 
+   greload:
+      description: Reloads the plugin.
       usage: /<command> 

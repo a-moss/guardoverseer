@@ -222,7 +222,8 @@ public class GuardOverseer extends JavaPlugin{
 		//Printing to the console
 		getLogger().info("The Guard Overseer Plugin has been enabled, made by mydeblob");
 		getServer().getPluginManager().registerEvents(new CommandHandler(this), this);
-		getCommand("update").setExecutor(new CommandHandler(this));
+		getCommand("gupdate").setExecutor(new CommandHandler(this));
+		getCommand("greload").setExecutor(new CommandHandler(this));
 		getCommand("duty").setExecutor(new CommandHandler(this));
 		getCommand("guards").setExecutor(new CommandHandler(this)); 
 		setupPermissions();
