@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -34,6 +35,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CommandHandler implements CommandExecutor, Listener{
 	private final GuardOverseer plugin; 
@@ -42,6 +44,9 @@ public class CommandHandler implements CommandExecutor, Listener{
 		this.plugin = plugin; 
 	}
 	private HashMap<String, Long> timeDuty = new HashMap<String, Long>();
+	private HashMap<String, Location> afk = new HashMap<String, Location>();
+	private HashMap<String, Integer> strikes = new HashMap<String, Integer>();
+	private HashMap<String, Integer> afkPay = new HashMap<String, Integer>();
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("duty")){
 			if(!(sender instanceof Player)){
@@ -73,7 +78,11 @@ public class CommandHandler implements CommandExecutor, Listener{
 					unsetPlayerFile(p);
 					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("off-duty-broadcast")).replaceAll("%p", p.getName()));
 					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("off-duty")));
-					endTime(p);
+					if(afkPay.containsKey(p.getName())){
+						endTime(p, afkPay.get(p.getName()));
+					}else{
+						endTime(p, 0);
+					}
 					return true;
 				}
 			}else{
@@ -154,21 +163,36 @@ public class CommandHandler implements CommandExecutor, Listener{
 		}
 		if(!plugin.getConfig().getBoolean("pay-guards")) return;
 		timeDuty.put(p.getName(), System.currentTimeMillis());
-		
+		  if(plugin.getConfig().getBoolean("afk")){
+			  afk.put(p.getName(), p.getLocation());
+			  strikes.put(p.getName(), 0);
+		  }
 	}
-	public void endTime(Player p){
+	public void pauseTime(Player p){
 		if(!timeDuty.containsKey(p.getName())){
 			return;
 		}
 		if(!plugin.getConfig().getBoolean("pay-guards")) return;
 		long start = timeDuty.get(p.getName());
 		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
-		p.sendMessage(String.valueOf(seconds));
 		int minutes = (int) seconds/60;
-		p.sendMessage(String.valueOf(minutes));
+		int pay = (plugin.getConfig().getInt("salary")/60)*minutes;
+		if(afkPay.containsKey(p.getName())){
+			afkPay.put(p.getName(), afkPay.get(p.getName())+pay);
+		}else{
+			afkPay.put(p.getName(), pay);
+		}
+	}
+	public void endTime(Player p, int additional){
+		if(!timeDuty.containsKey(p.getName())){
+			return;
+		}
+		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+		long start = timeDuty.get(p.getName());
+		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
+		int minutes = (int) seconds/60;
 		int pay = (plugin.getConfig().getInt("salary")/60);
-		p.sendMessage(String.valueOf(pay));
-		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes);
+		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes+additional);
 		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
 	}
 	public void givePotions(Player p){
@@ -478,6 +502,31 @@ public class CommandHandler implements CommandExecutor, Listener{
 		    // Will look like - An update is available: AntiCheat v1.5.9, a release for CB 1.6.2-R0.1 available at http://media.curseforge.com/XYZ
 		    p.sendMessage(ChatColor.BLUE + "Type /update if you would like to automatically update.");
 		  }
+	}
+	public void afk(){
+		Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new BukkitRunnable(){
+			public void run(){
+				for(Player p:Bukkit.getOnlinePlayers()){
+					if(onDuty(p)){
+						if(!plugin.getConfig().getBoolean("afk")) return;
+						if(afk.containsKey(p.getName())){
+							Location afkl = afk.get(p.getName());
+							if(afkl.getX() == p.getLocation().getX() && afkl.getY() == p.getLocation().getY() && afkl.getZ() == p.getLocation().getZ()){
+								if(strikes.containsKey(p.getName())){
+									if(strikes.get(p.getName()) == 3){
+										pauseTime(p);
+									}else{
+										strikes.put(p.getName(), strikes.get(p.getName()) + 1);
+									}
+								}else{
+									strikes.put(p.getName(), 1);
+								}
+							}
+						}
+					}
+				}
+			}
+		}, 0L, 20*60L);
 	}
 	@EventHandler
 	public void onDragEvent(InventoryClickEvent e){

@@ -62,6 +62,9 @@ amount: 10000
 # Wether or not to pay the guards for how long they are on duty
 pay-guards: true
 
+# If set to true, the guards wont get payed if they are afk for more then 3 minutes
+afk: true
+
 # Amount to pay the guards IF pay-guards is true
 # This is an hourly rate
 # If a player only goes on duty for 30 minutes, he will only be payed for the time
