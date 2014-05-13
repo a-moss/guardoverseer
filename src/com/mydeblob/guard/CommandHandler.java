@@ -56,6 +56,10 @@ public class CommandHandler implements CommandExecutor, Listener{
 			Player p = (Player) sender;
 			if(p.hasPermission("guardoverseer.duty")){
 				if(!onDuty(p)){
+					if(getPermission(p) == null){
+						p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "You don't have a kit permission! Please report this to an admin!");
+						return true;
+					}
 					GuardOverseer.perms.playerAdd(p, "combatlog.bypass");
 					givePermissions(p);
 					givePotions(p);
