@@ -1,6 +1,6 @@
 name: GuardOverseer
 main: com.mydeblob.guard.GuardOverseer
-version: 3.0
+version: 4.0
 depends: Vault
 commands:
    duty:
