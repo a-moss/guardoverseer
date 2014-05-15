@@ -119,6 +119,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 				if(plugin.getConfig().getBoolean("auto-updater")){
 					@SuppressWarnings("unused")
 					Updater updater = new Updater(plugin, 66080, plugin.getF(), Updater.UpdateType.NO_VERSION_CHECK, true); // Go straight to downloading, and announce progress to console.
+					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + ChatColor.GREEN + "Starting the download of the latest version of GuardOverseer. Check console for progress on the download. Reload after is has downloaded!");
 					return true;
 				}else{
 					sender.sendMessage(ChatColor.RED + "Please enable auto updating in the GuardOverseer config.yml to use this feature");
