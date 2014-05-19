@@ -325,7 +325,7 @@ public class GuardOverseer extends JavaPlugin{
 			return;
 		}
 		try {
-			getPlayerConfig().save(messageFile);
+			getMessageConfig().save(messageFile);
 		} catch (IOException ex) {
 			getLogger().log(Level.SEVERE, "Could not save config to " + messageFile, ex);
 		}

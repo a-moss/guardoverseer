@@ -575,11 +575,15 @@ public class CommandHandler implements CommandExecutor, Listener{
 	@EventHandler
 	public void playerDeathEco(PlayerDeathEvent event){
 		Player player = (Player) event.getEntity();
-		Player killer = (Player) event.getEntity().getKiller();
-		if(plugin.getConfig().getBoolean("give-money")){
-			if(onDuty(player)){
-				GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("amount"));
-				killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message").replaceAll("%a%", String.valueOf(plugin.getConfig().getInt("amount")))));
+		if(event.getEntity().getKiller() instanceof Player){
+			Player killer = (Player) event.getEntity().getKiller();
+			if(plugin.getConfig().getBoolean("give-money")){
+				if(!killer.getName().equalsIgnoreCase(player.getName())){
+					if(onDuty(player)){
+						GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("amount"));
+						killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message").replaceAll("%a%", String.valueOf(plugin.getConfig().getInt("amount")))));
+					}
+				}
 			}
 		}
 	}
