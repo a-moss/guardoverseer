@@ -48,13 +48,33 @@ tell-guard-who-hit: true
 
 # This will disable the auto-updater in-game if set to false
 auto-updater: true
+
+# This will be a delay between uses of /duty to prevent abuse
+# It is in seconds, set to 0 to disable
+command-delay: 5
+
+# This allows the guard to drop, remove, and give away the items that he picks up
+# while on duty
+# ****THE GUARD STILL CANT DROP THE GUARD ITEMS, JUST ITEMS HE PICKS UP****
+allow-drop-items: false
+
 # ******************THIS REQUIRES VAULT AND WILL NOT WORK WITHOUT IT****************
 # These are permission a guard will have only when he is ON duty
 onduty-permissions:
    - essentials.togglejail
 
+# These are permissions that will be removed from the guard while he is on duty
+# Ex. Remove sell sign permissions so he doesn't sell his items
+remove-onduty-permissions:
+   - essentials.signs.sell
+
 # Wether or not to give money to a player who kills a guard
 give-money: true
+
+# If this is enabled a player with the same IP as a guard will not get awarded
+# money for killing him
+# This is to prevent abuse with guards and alts
+log-ip: true
 
 # Amount of money to give to the player IF give-money is true
 amount: 10000
@@ -62,7 +82,8 @@ amount: 10000
 # Wether or not to pay the guards for how long they are on duty
 pay-guards: true
 
-# If set to true, the guards wont get payed if they are afk for more then 3 minutes
+# If set to true, the guards wont get payed if they are afk for more then 3 minutes or
+# if the guards log off
 afk: true
 
 # Amount to pay the guards IF pay-guards is true

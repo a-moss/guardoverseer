@@ -227,10 +227,16 @@ public class CommandHandler implements CommandExecutor, Listener{
 			for(String s:plugin.getConfig().getStringList("onduty-permissions")){
 				GuardOverseer.perms.playerAdd(p, s);
 			}
+			for(String s:plugin.getConfig().getStringList("remove-onduty-permissions")){
+				GuardOverseer.perms.playerRemove(p, s);
+			}
 	}
 	public void removePermissions(Player p){
 		for(String s:plugin.getConfig().getStringList("onduty-permissions")){
 			GuardOverseer.perms.playerRemove(p, s);
+		}
+		for(String s:plugin.getConfig().getStringList("remove-onduty-permissions")){
+			GuardOverseer.perms.playerAdd(p, s);
 		}
 	}
 	public void clearInventory(Player p){
