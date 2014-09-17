@@ -6,7 +6,7 @@ import java.util.Map;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.potion.PotionEffectType;
 
-public class PotEnchInit {
+public class Util {
 
 	
 	public static Map<String, Enchantment> initEnchantments(){
@@ -123,8 +123,9 @@ public class PotEnchInit {
 		ENCHANTMENTS.put("rodlure", Enchantment.LURE);
 		return ENCHANTMENTS;
 	}
-	public static void initPotions(){
-		
+	
+	public static Map<String, PotionEffectType> initPotions(){
+		Map<String, PotionEffectType> POTIONS = new HashMap<String, PotionEffectType>();
 		POTIONS.put("speed", PotionEffectType.SPEED);
 		POTIONS.put("fastwalking", PotionEffectType.SPEED);
 		POTIONS.put("walkfast", PotionEffectType.SPEED);
@@ -178,6 +179,6 @@ public class PotEnchInit {
 		POTIONS.put("increasedamage", PotionEffectType.INCREASE_DAMAGE);
 		POTIONS.put("increaseddamage", PotionEffectType.INCREASE_DAMAGE);
 		POTIONS.put("strong", PotionEffectType.INCREASE_DAMAGE);
-		//Begining of code taken from Essentials. Let's face it, who wants to type out 100+ lines of nearly identical code?
+		return POTIONS;
 	}
 }

@@ -25,10 +25,6 @@ import com.mydeblob.guard.Updater.ReleaseType;
 public class GuardOverseer extends JavaPlugin{
 	FileConfiguration config;
 	public ArrayList<String> duty = new ArrayList<String>();
-	private FileConfiguration playerConfig = null;
-	private File playerFile = null;
-	private FileConfiguration messageConfig = null;
-	private File messageFile = null;
 	public static Economy econ = null;
 	public static Permission perms = null;
 	public final Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
@@ -38,25 +34,26 @@ public class GuardOverseer extends JavaPlugin{
 	public static ReleaseType type = null;
 	public static String version = "";
 	public static String link = "";
+	public static boolean vaultEnabled = true;
 	public void onEnable(){
-		PotEnchInit.initEnchantments();
+		ENCHANTMENTS.putAll(Util.initEnchantments());
+		POTIONS.putAll(Util.initPotions());
+		FileManager.getFileManager().init(this);
 		File config = new File(getDataFolder(), "config.yml");
 		if (!config.exists()) {
 			this.saveDefaultConfig();
-			getLogger().info("GuardOverseer --------- No config.yml found! Loading default config!");
+			getLogger().info("[GuardOverseer] No config.yml found! Loading default config!");
 		}
 		File message = new File(getDataFolder(), "messages.yml");
 		if(!message.exists()){
-			this.saveDefaultMessageConfig();
-			getLogger().info("GuardOverseer --------- No messages.yml found! Loading default messages.yml!");
+			FileManager.getFileManager().saveDefaultLangConfig();
+			getLogger().info("[GuardOverseer] No messages.yml found! Loading default messages.yml!");
 		}
-		if (!setupEconomy() ) {
-			Bukkit.getServer().getLogger().log(Level.SEVERE, String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-			getServer().getPluginManager().disablePlugin(this);
-			return;
+		if (!setupEconomy()) {
+			getLogger().log(Level.SEVERE, "[GuardOverseer] Vault is not installed! Some features will not work properly! Please install it to get 100% functionality.");
+			vaultEnabled = false;
 		}
-		//Printing to the console
-		getLogger().info("The Guard Overseer Plugin has been enabled, made by mydeblob");
+		getLogger().info("[GuardOverseer] Successfully enabled.");
 		getServer().getPluginManager().registerEvents(new CommandHandler(this), this);
 		getCommand("gupdate").setExecutor(new CommandHandler(this));
 		getCommand("greload").setExecutor(new CommandHandler(this));
@@ -136,45 +133,4 @@ public class GuardOverseer extends JavaPlugin{
 		}
 	}
 
-	public void reloadMessageConfig() {
-		if (messageFile == null) {
-			messageFile = new File(getDataFolder(), "messages.yml");
-		}
-		messageConfig = YamlConfiguration.loadConfiguration(messageFile);
-
-		InputStream defConfigStream = this.getResource("messages.yml");
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			messageConfig.setDefaults(defConfig);
-		}
-	}
-
-	public FileConfiguration getMessageConfig() {
-		if (messageConfig == null) {
-			reloadMessageConfig();
-		}
-		return messageConfig;
-	}
-
-	public void saveMessageConfig() {
-		if (messageConfig == null || messageFile == null) {
-			return;
-		}
-		try {
-			getMessageConfig().save(messageFile);
-		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + messageFile, ex);
-		}
-	}
-	public void saveDefaultMessageConfig() {
-	    if (messageFile == null) {
-	        messageFile = new File(getDataFolder(), "messages.yml");
-	    }
-	    if (!messageFile.exists()) {            
-	         this.saveResource("messages.yml", false);
-	     }
-	}
-	public File getF(){
-		return this.getFile();
-	}
 }
