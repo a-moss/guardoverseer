@@ -13,7 +13,11 @@ public class FileManager {
 	private Plugin p;
 	static FileManager instance = new FileManager();
 	private static FileConfiguration langConfig = null;
-	public static File langFile = null;
+	public static File langFile = null; //This needs to be public so we can init the lang class
+	private static FileConfiguration kitsConfig = null;
+	private static File kitsFile = null;
+	private static FileConfiguration dataConfig = null;
+	private static File dataFile = null;
 
 	public static FileManager getFileManager(){
 		return instance;
@@ -24,44 +28,79 @@ public class FileManager {
 	}
 
 	/*
-	   --------------------Language Configuration Implementation--------------------
+	   --------------------Kits Configuration--------------------
 	 */
-	public void reloadLangConfig() {
-		if (langFile == null) {
+	public void reloadKitsConfig(){
+		if(kitsFile == null){
+			kitsFile = new File(p.getDataFolder(), "kits.yml");
+		}
+		kitsConfig = YamlConfiguration.loadConfiguration(kitsFile);
+		InputStream defConfigStream = p.getResource("kits.yml");
+		if(defConfigStream != null){
+			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(kitsFile);
+			kitsConfig.setDefaults(defConfig);
+		}
+	}
+	
+	public FileConfiguration getKitsConfig(){
+		if(kitsConfig == null){
+			reloadKitsConfig();
+		}
+		return kitsConfig;
+	}
+	
+	public void saveKitsConfig(){
+		if(kitsConfig == null || kitsFile == null){
+			return;
+		}
+		try{
+			getKitsConfig().save(kitsFile);
+		}catch(IOException e){
+			p.getLogger().log(Level.SEVERE, "[GuardOverseer] Failed to save the kits.yml! Error:");
+			e.printStackTrace();
+		}
+	}
+	/*
+	   --------------------Language Configuration--------------------
+	 */
+	
+	public void reloadLangConfig(){
+		if(langFile == null){
 			langFile = new File(p.getDataFolder(), "messages.yml");
 		}
 		langConfig = YamlConfiguration.loadConfiguration(langFile);
 		InputStream defConfigStream = p.getResource("messages.yml");
-		if (defConfigStream != null) {
+		if(defConfigStream != null){
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(langFile);
 			langConfig.setDefaults(defConfig);
 		}
 	}
 
-	public FileConfiguration getLangConfig() {
-		if (langConfig == null) {
+	public FileConfiguration getLangConfig(){
+		if(langConfig == null){
 			this.reloadLangConfig();
 		}
 		return langConfig;
 	}
 
 	public void saveLangConfig() {
-		if (langConfig == null || langFile == null) {
+		if(langConfig == null || langFile == null){
 			return;
 		}
-		try {
+		try{
 			getLangConfig().save(langFile);
-		} catch (IOException ex) {
-			p.getLogger().log(Level.SEVERE, "Could not save config to " + langFile, ex);
+		}catch (IOException e){
+			p.getLogger().log(Level.SEVERE, "[GuardOverseer] Failed to save the messages.yml! Error:");
+			e.printStackTrace();
 		}
 	}
 
 
-	public void saveDefaultLangConfig() {
-		if (langFile == null) {
+	public void saveDefaultLangConfig(){
+		if(langFile == null){
 			langFile = new File(p.getDataFolder(), "messages.yml");
 		}
-		if (!langFile.exists()) {            
+		if(!langFile.exists()){            
 			p.saveResource("messages.yml", false);
 		}
 	}
