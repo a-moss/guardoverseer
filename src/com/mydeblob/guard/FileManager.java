@@ -27,6 +27,41 @@ public class FileManager {
 		this.p = p;
 	}
 
+	//TODO Test this
+	/*
+	   --------------------Data Configuration--------------------
+	 */
+	public void reloadDataConfig(){
+		if(dataFile == null){
+			dataFile = new File(p.getDataFolder(), "data.yml");
+		}
+		dataConfig = YamlConfiguration.loadConfiguration(dataFile);
+		InputStream defConfigStream = p.getResource("data.yml");
+		if(defConfigStream != null){
+			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(dataFile);
+			dataConfig.setDefaults(defConfig);
+		}
+	}
+	
+	public FileConfiguration getDataConfig(){
+		if(dataConfig == null){
+			reloadDataConfig();
+		}
+		return dataConfig;
+	}
+	
+	public void saveDataConfig(){
+		if(dataConfig == null || dataFile == null){
+			return;
+		}
+		try{
+			getDataConfig().save(dataFile);
+		}catch(IOException e){
+			p.getLogger().log(Level.SEVERE, "[GuardOverseer] Failed to save the data.yml! Error:");
+			e.printStackTrace();
+		}
+	}
+	
 	/*
 	   --------------------Kits Configuration--------------------
 	 */
@@ -41,14 +76,14 @@ public class FileManager {
 			kitsConfig.setDefaults(defConfig);
 		}
 	}
-	
+
 	public FileConfiguration getKitsConfig(){
 		if(kitsConfig == null){
 			reloadKitsConfig();
 		}
 		return kitsConfig;
 	}
-	
+
 	public void saveKitsConfig(){
 		if(kitsConfig == null || kitsFile == null){
 			return;
@@ -60,10 +95,10 @@ public class FileManager {
 			e.printStackTrace();
 		}
 	}
+
 	/*
 	   --------------------Language Configuration--------------------
-	 */
-	
+	 */	
 	public void reloadLangConfig(){
 		if(langFile == null){
 			langFile = new File(p.getDataFolder(), "messages.yml");

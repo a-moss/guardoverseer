@@ -39,6 +39,7 @@ public class GuardOverseer extends JavaPlugin{
 		ENCHANTMENTS.putAll(Util.initEnchantments());
 		POTIONS.putAll(Util.initPotions());
 		FileManager.getFileManager().init(this);
+		Lang.setFile(YamlConfiguration.loadConfiguration(FileManager.langFile));
 		File config = new File(getDataFolder(), "config.yml");
 		if (!config.exists()) {
 			this.saveDefaultConfig();
@@ -100,37 +101,6 @@ public class GuardOverseer extends JavaPlugin{
 		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
 		perms = rsp.getProvider();
 		return perms != null;
-	}
-
-	public void reloadPlayerConfig() {
-		if (playerFile == null) {
-			playerFile = new File(getDataFolder(), "playerData.yml");
-		}
-		playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-
-		InputStream defConfigStream = this.getResource("playerData.yml");
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			playerConfig.setDefaults(defConfig);
-		}
-	}
-
-	public FileConfiguration getPlayerConfig() {
-		if (playerConfig == null) {
-			reloadPlayerConfig();
-		}
-		return playerConfig;
-	}
-
-	public void savePlayerConfig() {
-		if (playerConfig == null || playerFile == null) {
-			return;
-		}
-		try {
-			getPlayerConfig().save(playerFile);
-		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + playerFile, ex);
-		}
 	}
 
 }
