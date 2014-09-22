@@ -43,6 +43,8 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public CommandHandler(GuardOverseer plugin) {
 		this.plugin = plugin; 
 	}
+
+	private ArrayList<String> onDuty = new ArrayList<String>();
 	private HashMap<String, Long> timeDuty = new HashMap<String, Long>();
 	private HashMap<String, Location> afk = new HashMap<String, Location>();
 	private HashMap<String, Integer> strikes = new HashMap<String, Integer>();
@@ -157,66 +159,62 @@ public class CommandHandler implements CommandExecutor, Listener{
 		}
 		return false;
 	}
-	
-	public String parseColors(String message){
-		if(message == null) return null;
-		return ChatColor.translateAlternateColorCodes('&', message);
-	}
-	public void startTime(Player p){
-		if(timeDuty.containsKey(p.getName())){
-			timeDuty.remove(p.getName());
-		}
-		if(!plugin.getConfig().getBoolean("pay-guards")) return;
-		timeDuty.put(p.getName(), System.currentTimeMillis());
-		  if(plugin.getConfig().getBoolean("afk")){
-			  afk.put(p.getName(), p.getLocation());
-			  strikes.put(p.getName(), 0);
-		  }
-	}
-	public void pauseTime(Player p){
-		if(!timeDuty.containsKey(p.getName())){
-			return;
-		}
-		if(!plugin.getConfig().getBoolean("pay-guards")) return;
-		long start = timeDuty.get(p.getName());
-		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
-		int minutes = (int) seconds/60;
-		int pay = (plugin.getConfig().getInt("salary")/60)*minutes;
-		if(afkPay.containsKey(p.getName())){
-			afkPay.put(p.getName(), afkPay.get(p.getName())+pay);
-		}else{
-			afkPay.put(p.getName(), pay);
-		}
-	}
-	public void endTime(Player p, int additional){
-		if(!timeDuty.containsKey(p.getName())){
-			return;
-		}
-		if(!plugin.getConfig().getBoolean("pay-guards")) return;
-		long start = timeDuty.get(p.getName());
-		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
-		int minutes = (int) seconds/60;
-		int pay = (plugin.getConfig().getInt("salary")/60);
-		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes+additional);
-		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
-	}
+
+//	public void startTime(Player p){
+//		if(timeDuty.containsKey(p.getName())){
+//			timeDuty.remove(p.getName());
+//		}
+//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+//		timeDuty.put(p.getName(), System.currentTimeMillis());
+//		if(plugin.getConfig().getBoolean("afk")){
+//			afk.put(p.getName(), p.getLocation());
+//			strikes.put(p.getName(), 0);
+//		}
+//	}
+//	public void pauseTime(Player p){
+//		if(!timeDuty.containsKey(p.getName())){
+//			return;
+//		}
+//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+//		long start = timeDuty.get(p.getName());
+//		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
+//		int minutes = (int) seconds/60;
+//		int pay = (plugin.getConfig().getInt("salary")/60)*minutes;
+//		if(afkPay.containsKey(p.getName())){
+//			afkPay.put(p.getName(), afkPay.get(p.getName())+pay);
+//		}else{
+//			afkPay.put(p.getName(), pay);
+//		}
+//	}
+//	public void endTime(Player p, int additional){
+//		if(!timeDuty.containsKey(p.getName())){
+//			return;
+//		}
+//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+//		long start = timeDuty.get(p.getName());
+//		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
+//		int minutes = (int) seconds/60;
+//		int pay = (plugin.getConfig().getInt("salary")/60);
+//		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes+additional);
+//		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
+//	}
 	public void givePotions(Player p){
 		if(plugin.getConfig().getConfigurationSection("kits") != null){
 			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
-					if(getPermission(p) != null && getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
-									ArrayList<String> potionlist = new ArrayList<String>();
-									for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
-										potionlist.add(s);
-									}
-									for(String s:potionlist){
-										String[] pe = s.split(" ");
-										if(plugin.POTIONS.containsKey(pe[0])){
-											p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, (parseIntSingle(pe[1])-1)));
-										}
-									}
-								}
-							}
+				if(getPermission(p) != null && getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
+					ArrayList<String> potionlist = new ArrayList<String>();
+					for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
+						potionlist.add(s);
+					}
+					for(String s:potionlist){
+						String[] pe = s.split(" ");
+						if(plugin.POTIONS.containsKey(pe[0])){
+							p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, (parseIntSingle(pe[1])-1)));
 						}
+					}
+				}
+			}
+		}
 	}
 	public void removePotions(Player p){
 		for(PotionEffect pe:p.getActivePotionEffects()){
@@ -224,12 +222,12 @@ public class CommandHandler implements CommandExecutor, Listener{
 		}
 	}
 	public void givePermissions(Player p){
-			for(String s:plugin.getConfig().getStringList("onduty-permissions")){
-				GuardOverseer.perms.playerAdd(p, s);
-			}
-			for(String s:plugin.getConfig().getStringList("remove-onduty-permissions")){
-				GuardOverseer.perms.playerRemove(p, s);
-			}
+		for(String s:plugin.getConfig().getStringList("onduty-permissions")){
+			GuardOverseer.perms.playerAdd(p, s);
+		}
+		for(String s:plugin.getConfig().getStringList("remove-onduty-permissions")){
+			GuardOverseer.perms.playerRemove(p, s);
+		}
 	}
 	public void removePermissions(Player p){
 		for(String s:plugin.getConfig().getStringList("onduty-permissions")){
@@ -249,19 +247,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 		p.setExp(0.0F);
 		p.setGameMode(GameMode.SURVIVAL);
 	}
-	public boolean onDuty(Player p){
-		String name = p.getName();
-		if(plugin.getPlayerConfig().getConfigurationSection("playerData") != null){
-			for(String k:plugin.getPlayerConfig().getConfigurationSection("playerData").getKeys(false)){
-				if(k.equalsIgnoreCase(name)){
-					return true;
-				}
-			}
-		}else{
-			return false;
-		}
-		return false;
-	}
+
 	public String getGamemode(Player p){
 		if(p.getGameMode().equals(GameMode.ADVENTURE)){
 			return "Adventure";
@@ -433,87 +419,75 @@ public class CommandHandler implements CommandExecutor, Listener{
 	public void giveKit(Player p){
 		if(plugin.getConfig().getConfigurationSection("kits") != null){
 			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
-					if(getPermission(p) != null & getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
-						ArrayList<String> items = new ArrayList<String>();
-						for(String ca: plugin.getConfig().getStringList("kits." + k + ".kit-items")){
-							items.add(ca);
+				if(getPermission(p) != null & getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
+					ArrayList<String> items = new ArrayList<String>();
+					for(String ca: plugin.getConfig().getStringList("kits." + k + ".kit-items")){
+						items.add(ca);
+					}
+					ArrayList<ItemStack> is = new ArrayList<ItemStack>();
+					PlayerInventory pi = p.getInventory();
+					for(String s:items){
+						String[] sa = s.split(" "); //Break them up into spaces. This is where the plugin will break if additional spaces are provided
+						int length = sa.length; //If it is over 3 than they added enchantments
+						int item = 0;
+						int damage = 0;
+						item = parseInt(sa[0])[0];
+						if(parseInt(sa[0]).length > 1){
+							damage = parseInt(sa[0])[1];
 						}
-						ArrayList<ItemStack> is = new ArrayList<ItemStack>();
-						PlayerInventory pi = p.getInventory();
-						for(String s:items){
-							String[] sa = s.split(" "); //Break them up into spaces. This is where the plugin will break if additional spaces are provided
-							int length = sa.length; //If it is over 3 than they added enchantments
-							int item = 0;
-							int damage = 0;
-							item = parseInt(sa[0])[0];
-							if(parseInt(sa[0]).length > 1){
-								damage = parseInt(sa[0])[1];
+						ItemStack tis = new ItemStack(Material.getMaterial(item), parseIntSingle(sa[1]), (short) damage);
+						ItemMeta im = tis.getItemMeta();
+						if(sa.length > 3){
+							String[] name = sa[2].split(":");
+							if(!name[1].equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "null")))){
+								im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name[1].replaceAll("_", " ")));
 							}
-							ItemStack tis = new ItemStack(Material.getMaterial(item), parseIntSingle(sa[1]), (short) damage);
-							ItemMeta im = tis.getItemMeta();
-							if(sa.length > 3){
-									String[] name = sa[2].split(":");
-									if(!name[1].equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "null")))){
-									im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name[1].replaceAll("_", " ")));
-									}
-									String[] lores = sa[3].split(":");
-									if(!lores[1].equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "null")))){
-										ArrayList<String> lore = new ArrayList<String>();
-										for(String ss:lores[1].split("%n%")){
-											lore.add(ChatColor.translateAlternateColorCodes('&', ss.replaceAll("_", " ")));
-										}
-										im.setLore(lore);
-									}
+							String[] lores = sa[3].split(":");
+							if(!lores[1].equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "null")))){
+								ArrayList<String> lore = new ArrayList<String>();
+								for(String ss:lores[1].split("%n%")){
+									lore.add(ChatColor.translateAlternateColorCodes('&', ss.replaceAll("_", " ")));
+								}
+								im.setLore(lore);
+							}
 							tis.setItemMeta(im);
-							}
-							if(length > 3){
-								for(int i = 3;i<length;i++){
-									String[] el = sa[i].split(":");
-									String e = el[0];
-									String l = el[1];
-									if(plugin.ENCHANTMENTS.containsKey(e)){
-										tis.addUnsafeEnchantment(plugin.ENCHANTMENTS.get(e), parseIntSingle(l));
-									}
+						}
+						if(length > 3){
+							for(int i = 3;i<length;i++){
+								String[] el = sa[i].split(":");
+								String e = el[0];
+								String l = el[1];
+								if(plugin.ENCHANTMENTS.containsKey(e)){
+									tis.addUnsafeEnchantment(plugin.ENCHANTMENTS.get(e), parseIntSingle(l));
 								}
 							}
-							is.add(tis); 
 						}
-						for(ItemStack iss:is){
-							if(isHelmet(iss.getTypeId())){
-								pi.setHelmet(iss);
-								continue;
-							}if(isChestplate(iss.getTypeId())){
-								pi.setChestplate(iss);
-								continue;
-							}if(isLeggings(iss.getTypeId())){
-								pi.setLeggings(iss);
-								continue;
-							}if(isBoots(iss.getTypeId())){
-								pi.setBoots(iss);
-								continue;
-							}
-							pi.addItem(iss);
+						is.add(tis); 
+					}
+					for(ItemStack iss:is){
+						if(isHelmet(iss.getTypeId())){
+							pi.setHelmet(iss);
+							continue;
+						}if(isChestplate(iss.getTypeId())){
+							pi.setChestplate(iss);
+							continue;
+						}if(isLeggings(iss.getTypeId())){
+							pi.setLeggings(iss);
+							continue;
+						}if(isBoots(iss.getTypeId())){
+							pi.setBoots(iss);
 							continue;
 						}
-					} 
+						pi.addItem(iss);
+						continue;
+					}
+				} 
 			}
 		}else{
 			p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("error")));
 		}
 	}
-	
-	@SuppressWarnings("static-access")
-	@EventHandler
-	public void onPlayerLogin(PlayerJoinEvent e){
-		Player p = (Player) e.getPlayer();
-		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.BLUE + "Running GuardOverseer, by mydeblob");
-		  if(p.hasPermission("guardoverseer.update") && plugin.update && plugin.getConfig().getBoolean("auto-updater"))
-		  {
-		    p.sendMessage(ChatColor.BLUE + "An update is available: " + plugin.name + ", a " + plugin.type + " for " + plugin.version + " available at " + plugin.link);
-		    // Will look like - An update is available: AntiCheat v1.5.9, a release for CB 1.6.2-R0.1 available at http://media.curseforge.com/XYZ
-		    p.sendMessage(ChatColor.BLUE + "Type /update if you would like to automatically update.");
-		  }
-	}
+
 	public void afk(){
 		Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new BukkitRunnable(){
 			public void run(){
@@ -539,106 +513,5 @@ public class CommandHandler implements CommandExecutor, Listener{
 			}
 		}, 0L, 20*60L);
 	}
-	@EventHandler
-	public void onDragEvent(InventoryClickEvent e){
-		Player p = (Player) e.getWhoClicked();
-		if(onDuty(p)){
-			e.setCancelled(true);
-		}
-	}
-	@EventHandler
-	public void onPlayerDeathEvent(PlayerDeathEvent e){
-		Player p = (Player) e.getEntity();
-		if(e.getEntity() instanceof Player){
-			if(!plugin.getConfig().getBoolean("drop-items-on-death")){
-				if(onDuty(p)){
-					e.getDrops().clear();
-				}
-			}
-		}
-	}
-	@EventHandler
-	public void onHunger(FoodLevelChangeEvent e){
-		Player p = (Player) e.getEntity();
-		if(onDuty(p)){
-			if(plugin.getConfig().getBoolean("disable-hunger")){
-				e.setCancelled(true);
-			}
-		}
-	}
-	@EventHandler
-	public void itemframe(PlayerInteractEntityEvent event){
-		Player p = event.getPlayer();
-		Entity e = event.getRightClicked();
-		if(e instanceof ItemFrame){
-			if(onDuty(p)){
-				event.setCancelled(true);
-			}
-		}
 
-	}
-	    
-	@EventHandler
-	public void playerDeathEco(PlayerDeathEvent event){
-		Player player = (Player) event.getEntity();
-		if(event.getEntity().getKiller() instanceof Player){
-			Player killer = (Player) event.getEntity().getKiller();
-			if(plugin.getConfig().getBoolean("give-money")){
-				if(!killer.getName().equalsIgnoreCase(player.getName())){
-					if(onDuty(player)){
-						GuardOverseer.econ.depositPlayer(killer.getName(), plugin.getConfig().getInt("amount"));
-						killer.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + parseColors(plugin.getMessageConfig().getString("money-message").replaceAll("%a%", String.valueOf(plugin.getConfig().getInt("amount")))));
-					}
-				}
-			}
-		}
-	}
-
-	@EventHandler
-	public void onHit(EntityDamageByEntityEvent event){
-		if(event.getEntity() instanceof Player){
-			if(event.getDamager() instanceof Player){
-				Player player = (Player) event.getEntity();
-				Player damager = (Player) event.getDamager();
-				if(onDuty(player) && onDuty(damager)){
-					event.setCancelled(true);
-					return;
-				}
-				if(plugin.getConfig().getBoolean("tell-guard-who-hit")){
-					if(onDuty(player)){
-						if(damager.getItemInHand().getType() == null){
-							player.sendMessage(ChatColor.RED + damager.getName() + ChatColor.DARK_BLUE + " has hit you with his hand!");
-						}
-						player.sendMessage(ChatColor.DARK_RED + damager.getName() + ChatColor.DARK_BLUE + " has hit you with " + ChatColor.DARK_RED + damager.getItemInHand().getType() + ChatColor.DARK_BLUE +  "!");
-					}
-				}else return; //returning if the damager isn't a player
-			}else return; //returning if the entity isn't a player
-		}
-	}
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerDropItem(PlayerDropItemEvent e){
-		Player p = (Player) e.getPlayer();
-			if(onDuty(p)){
-				e.setCancelled(true);
-			}
-	}
-	@EventHandler(priority=EventPriority.HIGHEST)
-	public void onCmd(PlayerCommandPreprocessEvent e){
-		Player p = (Player) e.getPlayer();
-		if(onDuty(p)){
-			for(String s:plugin.getConfig().getStringList("disabled-commands")){
-				if(e.getMessage().startsWith(s)){
-					e.setCancelled(true);
-					p.sendMessage(parseColors(plugin.getMessageConfig().getString("no-command")));
-				}
-			}
-		}
-	}
-	@EventHandler
-	public void onPlayerRespawn(PlayerRespawnEvent event){
-		Player p = (Player) event.getPlayer();
-		if(onDuty(p)){
-			giveKit(p);
-		}
-	}
 }

@@ -1,10 +1,6 @@
 package com.mydeblob.guard;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -12,7 +8,6 @@ import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -24,7 +19,7 @@ import com.mydeblob.guard.Updater.ReleaseType;
 
 public class GuardOverseer extends JavaPlugin{
 	FileConfiguration config;
-	public ArrayList<String> duty = new ArrayList<String>();
+//	public ArrayList<String> duty = new ArrayList<String>();
 	public static Economy econ = null;
 	public static Permission perms = null;
 	public final Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
@@ -50,27 +45,29 @@ public class GuardOverseer extends JavaPlugin{
 			FileManager.getFileManager().saveDefaultLangConfig();
 			getLogger().info("[GuardOverseer] No messages.yml found! Loading default messages.yml!");
 		}
+		FileManager.getFileManager().reloadLangConfig();
+		File kits = new File(getDataFolder(), "kits.yml");
+		if(!kits.exists()){
+			getLogger().info("[GuardOverseer] No kits.yml found! Loading defualt kits.yml!");
+		}
+		FileManager.getFileManager().reloadKitsConfig();
+		File data = new File(getDataFolder(), "data.yml");
+		if(!data.exists()){
+			getLogger().info("[GuardOverseer] No data.yml found! Loading defualt kits.yml!");
+		}
+		FileManager.getFileManager().reloadDataConfig();
 		if (!setupEconomy()) {
 			getLogger().log(Level.SEVERE, "[GuardOverseer] Vault is not installed! Some features will not work properly! Please install it to get 100% functionality.");
 			vaultEnabled = false;
 		}
-		getLogger().info("[GuardOverseer] Successfully enabled.");
+		if(vaultEnabled){
+			setupPermissions();
+		}
 		getServer().getPluginManager().registerEvents(new CommandHandler(this), this);
 		getCommand("gupdate").setExecutor(new CommandHandler(this));
 		getCommand("greload").setExecutor(new CommandHandler(this));
 		getCommand("duty").setExecutor(new CommandHandler(this));
-		getCommand("guards").setExecutor(new CommandHandler(this)); 
-		setupPermissions();
-		reloadPlayerConfig();
-		if(getPlayerConfig().getConfigurationSection("playerData") == null){
-			getPlayerConfig().createSection("playerData");
-		}
-		if(getPlayerConfig().getConfigurationSection("onDuty") != null){
-			for(String k:getPlayerConfig().getStringList("onDuty")){
-				duty.add(k);
-			}
-		}
-		savePlayerConfig();
+		getCommand("guards").setExecutor(new CommandHandler(this));
 		if(getConfig().getBoolean("auto-updater")){
 			Updater updater = new Updater(this, 66080, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start Updater but just do a version check
 			update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
@@ -79,12 +76,23 @@ public class GuardOverseer extends JavaPlugin{
 			type = updater.getLatestType(); // Get the latest file's type
 			link = updater.getLatestFileLink(); // Get the latest link
 		}
+		getLogger().info("[GuardOverseer] Successfully enabled."); 
+//		reloadPlayerConfig();
+//		if(getPlayerConfig().getConfigurationSection("playerData") == null){
+//			getPlayerConfig().createSection("playerData");
+//		}
+//		if(getPlayerConfig().getConfigurationSection("onDuty") != null){
+//			for(String k:getPlayerConfig().getStringList("onDuty")){
+//				duty.add(k);
+//			}
+//		}
+//		savePlayerConfig();
 	}
 
 	public void onDisable(){
 		getLogger().info("The Guard Plugin has been disabled, made by mydeblob");
-		getPlayerConfig().set("onDuty", Arrays.asList(duty));
-		savePlayerConfig();
+//		getPlayerConfig().set("onDuty", Arrays.asList(duty));
+//		savePlayerConfig();
 	}
 	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
