@@ -198,65 +198,7 @@ public class CommandHandler implements CommandExecutor, Listener{
 //		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes+additional);
 //		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
 //	}
-	public void givePotions(Player p){
-		if(plugin.getConfig().getConfigurationSection("kits") != null){
-			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
-				if(getPermission(p) != null && getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
-					ArrayList<String> potionlist = new ArrayList<String>();
-					for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
-						potionlist.add(s);
-					}
-					for(String s:potionlist){
-						String[] pe = s.split(" ");
-						if(plugin.POTIONS.containsKey(pe[0])){
-							p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, (parseIntSingle(pe[1])-1)));
-						}
-					}
-				}
-			}
-		}
-	}
-	public void removePotions(Player p){
-		for(PotionEffect pe:p.getActivePotionEffects()){
-			p.removePotionEffect(pe.getType());
-		}
-	}
-	public void givePermissions(Player p){
-		for(String s:plugin.getConfig().getStringList("onduty-permissions")){
-			GuardOverseer.perms.playerAdd(p, s);
-		}
-		for(String s:plugin.getConfig().getStringList("remove-onduty-permissions")){
-			GuardOverseer.perms.playerRemove(p, s);
-		}
-	}
-	public void removePermissions(Player p){
-		for(String s:plugin.getConfig().getStringList("onduty-permissions")){
-			GuardOverseer.perms.playerRemove(p, s);
-		}
-		for(String s:plugin.getConfig().getStringList("remove-onduty-permissions")){
-			GuardOverseer.perms.playerAdd(p, s);
-		}
-	}
-	public void clearInventory(Player p){
-		PlayerInventory pi = p.getInventory();
-		pi.clear();
-		pi.setHelmet(new ItemStack(Material.AIR));
-		pi.setLeggings(new ItemStack(Material.AIR));
-		pi.setChestplate(new ItemStack(Material.AIR));
-		pi.setBoots(new ItemStack(Material.AIR));
-		p.setExp(0.0F);
-		p.setGameMode(GameMode.SURVIVAL);
-	}
-
-	public String getGamemode(Player p){
-		if(p.getGameMode().equals(GameMode.ADVENTURE)){
-			return "Adventure";
-		}else if(p.getGameMode().equals(GameMode.CREATIVE)){
-			return "Creative";
-		}else{
-			return "Survival";
-		}
-	}
+	
 	public void setPlayerFile(Player p){
 		PlayerInventory pi = p.getInventory();
 		plugin.getPlayerConfig().set("playerData", p.getName());

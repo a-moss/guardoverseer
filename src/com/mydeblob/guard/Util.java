@@ -1,13 +1,30 @@
 package com.mydeblob.guard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Util {
-
+	static Util instance = new Util();
+	private GuardOverseer p;
+	
+	public void init(GuardOverseer p){
+		this.p = p;
+	}
+	
+	public static Util getInstance(){
+		return instance;
+	}
 	
 	public static Map<String, Enchantment> initEnchantments(){
 		Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
@@ -180,5 +197,107 @@ public class Util {
 		POTIONS.put("increaseddamage", PotionEffectType.INCREASE_DAMAGE);
 		POTIONS.put("strong", PotionEffectType.INCREASE_DAMAGE);
 		return POTIONS;
+	}
+	
+	/**
+	 * Gives the player the potions (Must be exact names; Use Arrays.asList)
+	 * 
+	 * @param p - The player that should recieve the potions
+	 * @param potions - The potions that the player should recieve (Names must be exact)
+	 */
+	public void givePotions(Player p, ArrayList<String> potions){
+		for(String s:potions){
+			if(this.p.POTIONS.containsKey(s)){
+				p.addPotionEffect(new PotionEffect(this.p.POTIONS.get(s), Integer.MAX_VALUE))
+			}
+		}
+		if(plugin.getConfig().getConfigurationSection("kits") != null){
+			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
+				if(getPermission(p) != null && getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
+					ArrayList<String> potionlist = new ArrayList<String>();
+					for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
+						potionlist.add(s);
+					}
+					for(String s:potionlist){
+						String[] pe = s.split(" ");
+						if(plugin.POTIONS.containsKey(pe[0])){
+							p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, (parseIntSingle(pe[1])-1)));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Removes all active potions on the player
+	 * 
+	 * @param p - The player to remove the potion effects from
+	 */
+	public void removeAllPotions(Player p){
+		for(PotionEffect pe:p.getActivePotionEffects()){
+			p.removePotionEffect(pe.getType());
+		}
+	}
+	
+	/**
+	 * Gives the player the permissions listed (Use Arrays.asList)
+	 * 
+	 * @param p - The player to give the permissions
+	 * @param permissions - The permissions to give
+	 */
+	public void givePermissions(Player p, ArrayList<String> permissions){
+		if(GuardOverseer.vaultEnabled){
+			for(String s:permissions){
+				GuardOverseer.perms.playerAdd(p, s);
+			}
+		}
+	}
+	
+	/**
+	 * Remove the player the permissions listed (Use Arrays.asList)
+	 * 
+	 * @param p - The player to give the permissions
+	 * @param permissions - The permissions to remove
+	 */
+	public void removePermissions(Player p, ArrayList<String> permissions){
+		if(GuardOverseer.vaultEnabled){
+			for(String s:permissions){
+				GuardOverseer.perms.playerRemove(p, s);
+			}
+		}
+	}
+	
+	/**
+	 * Clears everything in the players inventory (Including armor), remove the players experience
+	 * and sets the players gamemode to survival
+	 * 
+	 * @param p - The player to perform the actions on
+	 */
+	public void clearPlayer(Player p){
+		PlayerInventory pi = p.getInventory();
+		pi.clear();
+		pi.setHelmet(new ItemStack(Material.AIR));
+		pi.setLeggings(new ItemStack(Material.AIR));
+		pi.setChestplate(new ItemStack(Material.AIR));
+		pi.setBoots(new ItemStack(Material.AIR));
+		p.setExp(0.0F);
+		p.setGameMode(GameMode.SURVIVAL);
+	}
+
+	/**
+	 * Returns the players gamemode (Name of it) as a string
+	 * 
+	 * @param p - The player to get the gamemode
+	 * @return String - The name of the gamemode
+	 */
+	public String getGamemode(Player p){
+		if(p.getGameMode().equals(GameMode.ADVENTURE)){
+			return "Adventure";
+		}else if(p.getGameMode().equals(GameMode.CREATIVE)){
+			return "Creative";
+		}else{
+			return "Survival";
+		}
 	}
 }
