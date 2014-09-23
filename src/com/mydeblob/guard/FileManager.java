@@ -95,6 +95,17 @@ public class FileManager {
 			e.printStackTrace();
 		}
 	}
+	
+	public void saveDefaultKitsConfigAndOverwrite(){
+		if(kitsFile == null){
+			kitsFile = new File(p.getDataFolder(), "kits.yml");
+		}         
+		if(kitsFile.exists()){
+			kitsFile.delete();
+		}
+		p.saveResource("kits.yml", false);
+		saveKitsConfig();
+	}
 
 	/*
 	   --------------------Language Configuration--------------------

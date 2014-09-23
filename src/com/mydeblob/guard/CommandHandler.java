@@ -1,6 +1,7 @@
 package com.mydeblob.guard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -39,40 +40,41 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CommandHandler implements CommandExecutor, Listener{
 	private final GuardOverseer plugin; 
-	public int max_value = Integer.MAX_VALUE;
+	GuardHandler gh = GuardHandler.getInstance();
 	public CommandHandler(GuardOverseer plugin) {
 		this.plugin = plugin; 
 	}
 
-	private ArrayList<String> onDuty = new ArrayList<String>();
-	private HashMap<String, Long> timeDuty = new HashMap<String, Long>();
-	private HashMap<String, Location> afk = new HashMap<String, Location>();
-	private HashMap<String, Integer> strikes = new HashMap<String, Integer>();
-	private HashMap<String, Integer> afkPay = new HashMap<String, Integer>();
+	//	private ArrayList<String> onDuty = new ArrayList<String>();
+	//	private HashMap<String, Long> timeDuty = new HashMap<String, Long>();
+	//	private HashMap<String, Location> afk = new HashMap<String, Location>();
+	//	private HashMap<String, Integer> strikes = new HashMap<String, Integer>();
+	//	private HashMap<String, Integer> afkPay = new HashMap<String, Integer>();
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("duty")){
 			if(!(sender instanceof Player)){
-				sender.sendMessage("This command can only be performed by players!");
+				sender.sendMessage(ChatColor.RED + "This command can only be performed by players!");
 				return true;
 			}
 			Player p = (Player) sender;
 			if(p.hasPermission("guardoverseer.duty")){
-				if(!onDuty(p)){
-					if(getPermission(p) == null){
-						p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix"))  + " " + ChatColor.RED + "You don't have a kit permission! Please report this to an admin!");
-						return true;
-					}
+				if(!gh.onDuty(p)){
+					gh.setOnDuty(p);
 					GuardOverseer.perms.playerAdd(p, "combatlog.bypass");
-					givePermissions(p);
-					givePotions(p);
-					plugin.duty.add(p.getName());
-					setPlayerFile(p);
-					p.sendMessage(parseColors(plugin.getMessageConfig().getString("saved")));
-					clearInventory(p);
-					giveKit(p);
-					startTime(p);
-					Bukkit.getServer().broadcastMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("on-duty-broadcast")).replaceAll("%p", p.getName()));
-					sender.sendMessage(parseColors(plugin.getMessageConfig().getString("on-duty")));
+					//					givePermissions(p);
+					//					givePotions(p);
+					//					plugin.duty.add(p.getName());
+					//					setPlayerFile(p);
+					//					p.sendMessage(parseColors(plugin.getMessageConfig().getString("saved")));
+					//					clearInventory(p);
+					//					giveKit(p);
+					//					startTime(p);
+					if(Lang.ON_DUTY_BROADCAST.send()){
+						Bukkit.broadcastMessage(Lang.PREFIX.toString() + Lang.ON_DUTY_BROADCAST.toString(Arrays.asList("%p%"), Arrays.asList(p.getName())));
+					}
+					if(Lang.ON_DUTY.send()){
+						p.sendMessage(Lang.PREFIX.toString() + Lang.ON_DUTY.toString(Arrays.asList("%p%"), Arrays.asList(p.getName())));
+					}
 					return true;
 				}else{
 					GuardOverseer.perms.playerRemove(p, "combatlog.bypass");
@@ -160,45 +162,45 @@ public class CommandHandler implements CommandExecutor, Listener{
 		return false;
 	}
 
-//	public void startTime(Player p){
-//		if(timeDuty.containsKey(p.getName())){
-//			timeDuty.remove(p.getName());
-//		}
-//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
-//		timeDuty.put(p.getName(), System.currentTimeMillis());
-//		if(plugin.getConfig().getBoolean("afk")){
-//			afk.put(p.getName(), p.getLocation());
-//			strikes.put(p.getName(), 0);
-//		}
-//	}
-//	public void pauseTime(Player p){
-//		if(!timeDuty.containsKey(p.getName())){
-//			return;
-//		}
-//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
-//		long start = timeDuty.get(p.getName());
-//		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
-//		int minutes = (int) seconds/60;
-//		int pay = (plugin.getConfig().getInt("salary")/60)*minutes;
-//		if(afkPay.containsKey(p.getName())){
-//			afkPay.put(p.getName(), afkPay.get(p.getName())+pay);
-//		}else{
-//			afkPay.put(p.getName(), pay);
-//		}
-//	}
-//	public void endTime(Player p, int additional){
-//		if(!timeDuty.containsKey(p.getName())){
-//			return;
-//		}
-//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
-//		long start = timeDuty.get(p.getName());
-//		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
-//		int minutes = (int) seconds/60;
-//		int pay = (plugin.getConfig().getInt("salary")/60);
-//		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes+additional);
-//		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
-//	}
-	
+	//	public void startTime(Player p){
+	//		if(timeDuty.containsKey(p.getName())){
+	//			timeDuty.remove(p.getName());
+	//		}
+	//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+	//		timeDuty.put(p.getName(), System.currentTimeMillis());
+	//		if(plugin.getConfig().getBoolean("afk")){
+	//			afk.put(p.getName(), p.getLocation());
+	//			strikes.put(p.getName(), 0);
+	//		}
+	//	}
+	//	public void pauseTime(Player p){
+	//		if(!timeDuty.containsKey(p.getName())){
+	//			return;
+	//		}
+	//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+	//		long start = timeDuty.get(p.getName());
+	//		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
+	//		int minutes = (int) seconds/60;
+	//		int pay = (plugin.getConfig().getInt("salary")/60)*minutes;
+	//		if(afkPay.containsKey(p.getName())){
+	//			afkPay.put(p.getName(), afkPay.get(p.getName())+pay);
+	//		}else{
+	//			afkPay.put(p.getName(), pay);
+	//		}
+	//	}
+	//	public void endTime(Player p, int additional){
+	//		if(!timeDuty.containsKey(p.getName())){
+	//			return;
+	//		}
+	//		if(!plugin.getConfig().getBoolean("pay-guards")) return;
+	//		long start = timeDuty.get(p.getName());
+	//		int seconds = (int)TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - start)); //in seconds
+	//		int minutes = (int) seconds/60;
+	//		int pay = (plugin.getConfig().getInt("salary")/60);
+	//		GuardOverseer.econ.depositPlayer(p.getName(), pay*minutes+additional);
+	//		p.sendMessage(parseColors(plugin.getMessageConfig().getString("prefix")) + " " + parseColors(plugin.getMessageConfig().getString("pay-day")).replaceAll("%a%", String.valueOf(pay*minutes)).replaceAll("%t%", String.valueOf(minutes)));
+	//	}
+
 	public void setPlayerFile(Player p){
 		PlayerInventory pi = p.getInventory();
 		plugin.getPlayerConfig().set("playerData", p.getName());

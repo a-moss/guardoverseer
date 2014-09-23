@@ -60,7 +60,7 @@ allow-drop-items: false
 
 # ******************THIS REQUIRES VAULT AND WILL NOT WORK WITHOUT IT****************
 # These are permission a guard will have only when he is ON duty
-onduty-permissions:
+permissions:
    - essentials.togglejail
 
 # These are permissions that will be removed from the guard while he is on duty

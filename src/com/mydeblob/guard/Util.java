@@ -2,6 +2,7 @@ package com.mydeblob.guard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.GameMode;
@@ -10,7 +11,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -26,6 +26,11 @@ public class Util {
 		return instance;
 	}
 	
+	/**
+	 * Initializes the enchantment array
+	 * 
+	 * @return Map<String, Enchantment> - The initialized array
+	 */
 	public static Map<String, Enchantment> initEnchantments(){
 		Map<String, Enchantment> ENCHANTMENTS = new HashMap<String, Enchantment>();
 		ENCHANTMENTS.put("alldamage", Enchantment.DAMAGE_ALL);
@@ -141,6 +146,11 @@ public class Util {
 		return ENCHANTMENTS;
 	}
 	
+	/**
+	 * Initializes the potion array
+	 * 
+	 * @return Map<String, Enchantment> - The initialized array
+	 */
 	public static Map<String, PotionEffectType> initPotions(){
 		Map<String, PotionEffectType> POTIONS = new HashMap<String, PotionEffectType>();
 		POTIONS.put("speed", PotionEffectType.SPEED);
@@ -204,28 +214,15 @@ public class Util {
 	 * 
 	 * @param p - The player that should recieve the potions
 	 * @param potions - The potions that the player should recieve (Names must be exact)
+	 * @param potionLevel - The potion level that the player should recieve (Parallel array)
 	 */
-	public void givePotions(Player p, ArrayList<String> potions){
+	public void givePotions(Player p, ArrayList<String> potions, ArrayList<Integer> potionLevel){
+		int index = 0;
 		for(String s:potions){
 			if(this.p.POTIONS.containsKey(s)){
-				p.addPotionEffect(new PotionEffect(this.p.POTIONS.get(s), Integer.MAX_VALUE))
+				p.addPotionEffect(new PotionEffect(this.p.POTIONS.get(s), Integer.MAX_VALUE, potionLevel.get(index)));
 			}
-		}
-		if(plugin.getConfig().getConfigurationSection("kits") != null){
-			for(String k: plugin.getConfig().getConfigurationSection("kits").getKeys(false)){
-				if(getPermission(p) != null && getPermission(p).equalsIgnoreCase(plugin.getConfig().getString("kits." + k + ".permission"))){
-					ArrayList<String> potionlist = new ArrayList<String>();
-					for(String s:plugin.getConfig().getStringList("kits." + k + ".potions")){
-						potionlist.add(s);
-					}
-					for(String s:potionlist){
-						String[] pe = s.split(" ");
-						if(plugin.POTIONS.containsKey(pe[0])){
-							p.addPotionEffect(new PotionEffect(plugin.POTIONS.get(pe[0]), max_value, (parseIntSingle(pe[1])-1)));
-						}
-					}
-				}
-			}
+			index++;
 		}
 	}
 	
@@ -246,7 +243,7 @@ public class Util {
 	 * @param p - The player to give the permissions
 	 * @param permissions - The permissions to give
 	 */
-	public void givePermissions(Player p, ArrayList<String> permissions){
+	public void givePermissions(Player p, List<String> permissions){
 		if(GuardOverseer.vaultEnabled){
 			for(String s:permissions){
 				GuardOverseer.perms.playerAdd(p, s);
@@ -260,7 +257,7 @@ public class Util {
 	 * @param p - The player to give the permissions
 	 * @param permissions - The permissions to remove
 	 */
-	public void removePermissions(Player p, ArrayList<String> permissions){
+	public void removePermissions(Player p, List<String> permissions){
 		if(GuardOverseer.vaultEnabled){
 			for(String s:permissions){
 				GuardOverseer.perms.playerRemove(p, s);
@@ -300,4 +297,5 @@ public class Util {
 			return "Survival";
 		}
 	}
+
 }

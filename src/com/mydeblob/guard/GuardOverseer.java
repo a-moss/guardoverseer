@@ -35,6 +35,7 @@ public class GuardOverseer extends JavaPlugin{
 		POTIONS.putAll(Util.initPotions());
 		FileManager.getFileManager().init(this);
 		Util.getInstance().init(this);
+		GuardHandler.getInstance().init(this);
 		Lang.setFile(YamlConfiguration.loadConfiguration(FileManager.langFile));
 		File config = new File(getDataFolder(), "config.yml");
 		if (!config.exists()) {

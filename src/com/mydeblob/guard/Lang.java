@@ -6,7 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum Lang {
-	PREFIX("prefix", "&f[&bGuardOverseer&f]");
+	PREFIX("prefix", "&f[&bGuardOverseer&f]"),
+	ON_DUTY_BROADCAST("on-duty-broadcast", ""),
+	ON_DUTY("on-duty", "");
 	
 
 	private String path;
@@ -19,6 +21,7 @@ public enum Lang {
 
 	/**
 	 * Sets the yaml file to get the message from (Usally called in onEnable)
+	 * 
 	 * @param langConfig - The yamlconfiguration to use 
 	 */
 	public static void setFile(YamlConfiguration langConfig) {
@@ -26,7 +29,17 @@ public enum Lang {
 	}
 
 	/**
+	 * Checks if it should send the message
+	 * 
+	 * @return boolean - TRUE if it should send, FALSE otherwise
+	 */
+	public boolean send(){
+		return this.toString() != "null";
+	}
+	
+	/**
 	 * Converts the enum to a string (Not replacing anything, just converting colors)
+	 * 
 	 * @return String - The formatted string
 	 */
 	public String toString() {
@@ -40,6 +53,7 @@ public enum Lang {
 	/**
 	 * NOTE - PLEASE USE ARRAY.ASLIST WITH THIS. ie. Array.asList("a", "b", "c")
 	 * Converts the enum to a string replacing what needs to be replaced
+	 * 
 	 * @param keyword - The keyword to watch to be replaced, i.e %s%
 	 * @param replacedWith - What the keyword (Must be the same index as the keyword) should be replaced with
 	 * @return String - The formatted string
