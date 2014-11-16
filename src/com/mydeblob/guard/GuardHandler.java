@@ -10,12 +10,14 @@ import org.bukkit.potion.PotionEffect;
 public class GuardHandler {
 	static GuardHandler instance = new GuardHandler();
 	private ArrayList<String> onDuty = new ArrayList<String>();
-	FileManager f = FileManager.getFileManager();
+	
+	private static FileManager f = FileManager.getFileManager();
+	
 	private GuardOverseer p;
 	public void init(GuardOverseer p){
 		this.p = p;
 	}
-	Util u = Util.getInstance();
+	private static Util u = Util.getInstance();
 
 	public static GuardHandler getInstance(){
 		return instance;

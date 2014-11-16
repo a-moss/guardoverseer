@@ -30,24 +30,32 @@ kits:
 # ------------------------------------------------------------
 
 # This is wether or not to drop guard items when he dies. This will only affect a player
-# When they are on /duty
+# when they are on /duty
+# TRUE will drop items, FALSE won't drop items
 drop-items-on-death : false
 
-# When the player is on duty if this is set to true they will NOT lose hunger
-disable-hunger: true
+# This is wether or not a guard should have hunger loss while on duty
+# TRUE will have hunger loss, FALSE won't
+hunger: true
 
 # These are commands that the player won't be able to perform when he is on duty
 disabled-commands:
    - /auc
    - /sell
 
-# This will tell players who are on duty who hit them and with what. 
-# ie: Someones on duty and I hit them it will message them
-# "mydeblob has hit you with a hand!"
-tell-guard-who-hit: true
+# This is wether guards who are on duty should be able to hurt each other
+# TRUE if they can hurt each other, FALSE if they can't
+guard-pvp: false
 
-# This will disable the auto-updater in-game if set to false
-auto-updater: true
+# This will tell guards who are on duty who hit them and with what. 
+# ie: Someones on duty and I hit them with a diamond sword it will say,
+# "mydeblob has hit you with a diamond sword!"
+# TRUE will tell guards, FALSE won't tell guards
+pvp-notifications: true
+
+# This will alert staff if there is a new update available, and if there is download it
+# If this is TRUE it will alert staff, if it's FALSE it will be disabled completely
+auto-update: true
 
 # This will be a delay between uses of /duty to prevent abuse
 # It is in seconds, set to 0 to disable
@@ -68,16 +76,14 @@ permissions:
 remove-onduty-permissions:
    - essentials.signs.sell
 
-# Wether or not to give money to a player who kills a guard
-give-money: true
+# This is the amount of money awarded to a player who kills a guard
+# Set to 0 to disable
+award: 1000
 
 # If this is enabled a player with the same IP as a guard will not get awarded
 # money for killing him
 # This is to prevent abuse with guards and alts
 log-ip: true
-
-# Amount of money to give to the player IF give-money is true
-amount: 10000
 
 # Wether or not to pay the guards for how long they are on duty
 pay-guards: true

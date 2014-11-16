@@ -8,7 +8,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public enum Lang {
 	PREFIX("prefix", "&f[&bGuardOverseer&f]"),
 	ON_DUTY_BROADCAST("on-duty-broadcast", ""),
-	ON_DUTY("on-duty", "");
+	ON_DUTY("on-duty", ""),
+	AWARDED("award", "&aYou just got rewarded $%a% for killing a guard!"),
+	DISABLED_COMMAND("disabled-command", "&4You are not allowed to perform this command while on duty!");
 	
 
 	private String path;
